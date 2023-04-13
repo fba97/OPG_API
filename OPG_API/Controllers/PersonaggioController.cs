@@ -14,10 +14,10 @@ namespace OPG_API.Controllers
 
         private readonly ILogger<PersonaggioController> _logger;
 
-        public PersonaggioController(ILogger<PersonaggioController> logger)
+        public PersonaggioController(ILogger<PersonaggioController> logger, DataAccess da)
         {
             _logger = logger;
-            _dataAccess = new DataAccess("Server=192.168.1.74;Database=OPG_DB;Trusted_Connection=True;TrustServerCertificate=true;");
+            _dataAccess = da;
         }
 
         [HttpGet(Name = "GetAllPersonaggi")]

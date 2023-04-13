@@ -12,8 +12,9 @@ namespace Primitives
     public class DataAccess
     {
        private readonly string _connString = string.Empty;
-        public DataAccess(IConfiguration configuration) {
-            _connString = configuration.GetConnectionString("sqlConnection");
+        public DataAccess(IConfiguration configuration) 
+        {
+                _connString = configuration.GetConnectionString("sqlStringConnection");
         }
 
         public DataAccess(string connectionString)
