@@ -12,6 +12,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DataAccess>();
+//// Add CORS policy
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowOrigin",
+//        builder => builder.WithOrigins("https://localhost:7087"));
+//});
+
 
 
 var app = builder.Build();
@@ -22,6 +29,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Use CORS middleware
+//app.UseCors("AllowOrigin");
 
 app.UseHttpsRedirection();
 

@@ -11,7 +11,9 @@ namespace Test
         {
             var connectionString = "Server=localhost;Database=OPG_DB;Trusted_Connection=True;TrustServerCertificate=true;";
             var testCs = new DataAccess(connectionString);
-            var data = await testCs.GetAllCharacters();
+            //var data = await testCs.GetAllPersonaggiBase();
+            var personaggiInPartita = await testCs.GetAllPersonaggiInPartitaFromDb();
+
         }
     }
 }

@@ -5,7 +5,7 @@ using Primitives;
 namespace OPG_API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class PersonaggioController : ControllerBase
     {
 
@@ -20,10 +20,24 @@ namespace OPG_API.Controllers
             _dataAccess = da;
         }
 
-        [HttpGet(Name = "GetAllPersonaggi")]
-        public async Task<IEnumerable<PersonaggioBase>> Get()
+        [HttpGet("GetAllPersonaggiBase")]
+        
+        public async Task<ActionResult<IEnumerable<PersonaggioBase>>> GetAllPersonaggiBase()
         {
-            return await _dataAccess.GetAllCharacters();
+            return Ok(await _dataAccess.GetAllPersonaggiBaseFromDb());
         }
+
+        [HttpGet("GetAllPersonaggiInPartita")]
+        public async Task<IEnumerable<PersonaggioInPartita>> GetAllPersonaggiInPartita()
+        {
+            return await _dataAccess.GetAllPersonaggiInPartitaFromDb();
+        }
+
+        [HttpGet("GetAllNpcs")]
+        public async Task<IEnumerable<PersonaggioInPartita>> GetAllNpcs()
+        {
+            return await _dataAccess.GetAllNpcsFromDb();
+        }
+
     }
 }
