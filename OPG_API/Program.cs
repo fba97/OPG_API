@@ -12,12 +12,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DataAccess>();
-//// Add CORS policy
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowOrigin",
-//        builder => builder.WithOrigins("https://localhost:7087"));
-//});
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowOrigin",
+        builder => builder.WithOrigins("https://localhost:7087"));
+});
 
 
 
@@ -30,8 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Use CORS middleware
-//app.UseCors("AllowOrigin");
+Use CORS middleware
+app.UseCors("AllowOrigin");
 
 app.UseHttpsRedirection();
 
