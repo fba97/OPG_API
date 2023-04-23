@@ -35,8 +35,8 @@ namespace OPG_API.Controllers
 
         public async Task<ActionResult<IEnumerable<Combattimento>>> GetAllCombattimenti()
         {
-            //await _dataAccess.GetAllCombattimentiFromDb()
-            return Ok(new List<Combattimento>());
+            
+            return Ok(await _dataAccess.GetAllCombattimentiFromDb());
         }
 
 
