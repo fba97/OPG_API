@@ -208,5 +208,76 @@ namespace Primitives
             return allCharacter;
 
         }
+
+        public async Task<Combattimento?> GetAllCombattimentoByIdFromDb(int idCombattimento)
+        {
+
+            string query = $@"select	C.Id_ListaEroi, 
+                           		    C.Nome, 
+                           		    LC.IdCombattente, 
+                           		    LC.TipoPersonaggio
+                           FROM 
+                           dbo.combattimenti C
+                           LEFT 
+                           JOIN
+                           dbo.ListeCombattenti LC
+                           ON C.Id_ListaEroi = LC.Id_Combattimento
+                           WHERE C.Id_ListaEroi = @idCombattimento";
+
+            await using var conn = new SqlConnection(_connString);
+            await using var cmd = new SqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@idCombattimento",idCombattimento);
+
+            await conn.OpenAsync();
+
+            using var r = await cmd.ExecuteReaderAsync();
+
+            var combattimento  = new Combattimento();
+
+            while (await r.ReadAsync())
+            {
+                combattimento.Id = r.GetInt32(0);
+                combattimento.Nome = r.GetString(1);
+
+                if (r.GetInt32(3) == 1)
+                    combattimento.ListaEroi.Add(r.GetInt32(2));
+                if (r.GetInt32(3) == 2)
+                    combattimento.ListaNPCs.Add(r.GetInt32(2));
+            }
+
+            if (combattimento.Id == -1)
+                return null;
+
+            return combattimento;
+
+        }
+
+        public async Task<IEnumerable<Combattimento>> GetAllCombattimentiFromDb()
+        {
+            string query = $@"select	C.Id_ListaEroi, 
+                           		        C.Nome
+                           FROM 
+                           dbo.combattimenti C";
+
+            await using var conn = new SqlConnection(_connString);
+            await using var cmd = new SqlCommand(query, conn);
+
+            await conn.OpenAsync();
+
+            using var r = await cmd.ExecuteReaderAsync();
+
+            var combattimenti = new List<Combattimento>();
+
+            while (await r.ReadAsync())
+            {
+                var comb = new Combattimento();
+                comb.Id = r.GetInt32(0);
+                comb.Nome = r.GetString(1);
+                combattimenti.Add(comb);
+            }
+            return combattimenti;
+        }
+        
     }
 }

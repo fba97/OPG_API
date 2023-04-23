@@ -30,7 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-Use CORS middleware
+//Use CORS middleware
 app.UseCors("AllowOrigin");
 
 app.UseHttpsRedirection();

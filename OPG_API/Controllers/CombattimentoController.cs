@@ -6,38 +6,39 @@ namespace OPG_API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PersonaggioController : ControllerBase
+    public class CombattimentoController : ControllerBase
     {
 
 
         private readonly DataAccess _dataAccess;
 
-        private readonly ILogger<PersonaggioController> _logger;
+        private readonly ILogger<CombattimentoController> _logger;
 
-        public PersonaggioController(ILogger<PersonaggioController> logger, DataAccess da)
+        public CombattimentoController(ILogger<CombattimentoController> logger, DataAccess da)
         {
             _logger = logger;
             _dataAccess = da;
         }
 
-        [HttpGet("GetAllPersonaggiBase")]
-        
-        public async Task<ActionResult<IEnumerable<PersonaggioBase>>> GetAllPersonaggiBase()
+        [HttpGet("GetCombattimentoById")]
+
+        public async Task<ActionResult<Combattimento?>> GetAllCombattimentoById(int idCombattimento)
         {
-            return Ok(await _dataAccess.GetAllPersonaggiBaseFromDb());
+            var resp = await _dataAccess.GetAllCombattimentoByIdFromDb(idCombattimento);
+            if(resp is not null)
+                return Ok(resp);
+            else 
+                return BadRequest("l'Id combattimento richiesto non è presente a database.");
         }
 
-        [HttpGet("GetAllPersonaggiInPartita")]
-        public async Task<IEnumerable<PersonaggioInPartita>> GetAllPersonaggiInPartita()
+        [HttpGet("GetAllCombattimenti")]
+
+        public async Task<ActionResult<IEnumerable<Combattimento>>> GetAllCombattimenti()
         {
-            return await _dataAccess.GetAllPersonaggiInPartitaFromDb();
+            //await _dataAccess.GetAllCombattimentiFromDb()
+            return Ok(new List<Combattimento>());
         }
 
-        [HttpGet("GetAllNpcs")]
-        public async Task<IEnumerable<PersonaggioInPartita>> GetAllNpcs()
-        {
-            return await _dataAccess.GetAllNpcsFromDb();
-        }
 
     }
 }
