@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -63,6 +64,71 @@ namespace Primitives
 
         }
 
+        public async Task<PersonaggioInPartita> GetPersonaggioInPartitaByIdFromDb(int idPersonaggio)
+        {
+            var query = @" SELECT 
+                                    	   PB.[id_personaggio]
+                                    	  ,PB.[nome]
+                                    	  ,Pb.[punti_vita_massimi]
+                                    	  ,PB.[attacco]
+                                    	  ,PB.[difesa]
+                                          ,PB.[Descrizione]
+                                          ,PP.[id_personaggio_partita]
+                                          ,PP.[id_partita]
+                                          ,PP.[livello]
+                                          ,PP.[tipo_personaggio]
+                                          ,PP.[posizione_x_personaggio]
+                                          ,PP.[posizione_y_personaggio]
+                                          ,PP.[punti_vita]
+                                          ,PP.[attacco]
+                                          ,PP.[difesa]
+                                          ,PP.[stato]
+                                          ,PP.[taglia]
+                                    
+                                      FROM [dbo].[Personaggi_In_Partita] PP
+                                      LEFT JOIN 
+                                      [dbo].[Personaggi_Base] PB
+                                    	ON PP.id_personaggio_base = PB.id_personaggio
+										where id_personaggio = @idPersonaggio";
+
+            await using var conn = new SqlConnection(_connString);
+            await using var cmd = new SqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@idPersonaggio", idPersonaggio);
+
+            await conn.OpenAsync();
+
+            using var r = await cmd.ExecuteReaderAsync();
+
+            var pgInPartita = new PersonaggioInPartita();
+
+            while (await r.ReadAsync())
+            {
+                var statoPg = new Stato();
+                var statoString = r.IsDBNull(15) ? string.Empty : r.GetString(15);
+
+                pgInPartita.Id = r.GetInt32(0);
+                pgInPartita.Nome = r.GetString(1);
+                pgInPartita.PuntiVitaMassimi = r.GetInt32(2);
+                pgInPartita.Attacco = r.GetInt32(3);
+                pgInPartita.Difesa = r.GetInt32(4);
+                pgInPartita.Descrizione = r.IsDBNull(5) ? string.Empty : r.GetString(5);
+                pgInPartita.IdPersonaggioPartita = r.GetInt32(6);
+                pgInPartita.IdPartita = r.GetInt32(7);
+                pgInPartita.Livello = r.GetInt32(8);
+                pgInPartita.TipoPersonaggio = r.GetInt32(9);
+                pgInPartita.PosizioneXPersonaggio = r.GetInt32(10);
+                pgInPartita.PosizioneYPersonaggio = r.GetInt32(11);
+                pgInPartita.PuntiVitaPersonaggio = r.GetInt32(12);
+                pgInPartita.Attacco_InPartita = r.GetInt32(13);
+                pgInPartita.Difesa_InPartita = r.GetInt32(14);
+                pgInPartita.Stato = statoPg;
+                pgInPartita.Taglia = r.GetInt32(16);
+            }
+
+            return pgInPartita;
+
+        }
 
         public async Task<IEnumerable<PersonaggioInPartita>> GetAllPersonaggiInPartitaFromDb()
         {
@@ -209,7 +275,46 @@ namespace Primitives
 
         }
 
-        public async Task<Combattimento?> GetAllCombattimentoByIdFromDb(int idCombattimento)
+        public async Task<int> UpdatePersonaggioInPartitaByIdToDb(PersonaggioInPartita updatePersonaggio)
+        {
+            var query = @"UPDATE		[dbo].[Personaggi_In_Partita]
+                                     
+							SET			id_partita = @id_partita,			
+										taglia = @taglia,
+										livello = @livello,
+										tipo_personaggio = @tipo_personaggio,
+										posizione_x_personaggio = @posizione_x_personaggio,
+										posizione_y_personaggio = @posizione_y_personaggio,
+										punti_vita = @punti_vita,
+										attacco = @attacco,
+										difesa = @difesa,
+										stato = @stato
+										 
+							WHERE     id_personaggio_partita = @id_personaggio_partita";
+
+
+            await using var conn = new SqlConnection(_connString);
+            await using var cmd = new SqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@id_personaggio_partita", updatePersonaggio.IdPersonaggioPartita);
+            cmd.Parameters.AddWithValue("@id_partita", updatePersonaggio.IdPartita); 
+            cmd.Parameters.AddWithValue("@taglia", updatePersonaggio.Taglia); 
+            cmd.Parameters.AddWithValue("@livello", updatePersonaggio.Livello); 
+            cmd.Parameters.AddWithValue("@tipo_personaggio", updatePersonaggio.TipoPersonaggio); 
+            cmd.Parameters.AddWithValue("@posizione_x_personaggio", updatePersonaggio.PosizioneXPersonaggio); 
+            cmd.Parameters.AddWithValue("@posizione_y_personaggio", updatePersonaggio.PosizioneYPersonaggio);
+            cmd.Parameters.AddWithValue("@punti_vita", updatePersonaggio.PuntiVitaPersonaggio);
+            cmd.Parameters.AddWithValue("@attacco", updatePersonaggio.Attacco_InPartita);
+            cmd.Parameters.AddWithValue("@difesa", updatePersonaggio.Difesa_InPartita);
+            cmd.Parameters.AddWithValue("@stato", string.Empty);
+
+            await conn.OpenAsync();
+            return await cmd.ExecuteNonQueryAsync();
+        }
+
+
+
+        public async Task<Combattimento?> GetCombattimentoByIdFromDb(int idCombattimento)
         {
 
             string query = $@"select	C.Id_ListaEroi, 
@@ -227,13 +332,13 @@ namespace Primitives
             await using var conn = new SqlConnection(_connString);
             await using var cmd = new SqlCommand(query, conn);
 
-            cmd.Parameters.AddWithValue("@idCombattimento",idCombattimento);
+            cmd.Parameters.AddWithValue("@idCombattimento", idCombattimento);
 
             await conn.OpenAsync();
 
             using var r = await cmd.ExecuteReaderAsync();
 
-            var combattimento  = new Combattimento();
+            var combattimento = new Combattimento();
 
             while (await r.ReadAsync())
             {
@@ -278,6 +383,12 @@ namespace Primitives
             }
             return combattimenti;
         }
-        
+
+        public async Task<string> PostAttaccoToDB(int attaccato, int attaccante)
+        {
+
+            return string.Empty;
+        }
+
     }
 }

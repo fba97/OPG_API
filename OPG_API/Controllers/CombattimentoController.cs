@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.IdentityModel.Tokens;
 using Primitives;
 
 namespace OPG_API.Controllers
@@ -24,7 +24,7 @@ namespace OPG_API.Controllers
 
         public async Task<ActionResult<Combattimento?>> GetAllCombattimentoById(int idCombattimento)
         {
-            var resp = await _dataAccess.GetAllCombattimentoByIdFromDb(idCombattimento);
+            var resp = await _dataAccess.GetCombattimentoByIdFromDb(idCombattimento);
             if(resp is not null)
                 return Ok(resp);
             else 
@@ -38,6 +38,29 @@ namespace OPG_API.Controllers
             
             return Ok(await _dataAccess.GetAllCombattimentiFromDb());
         }
+
+
+        [HttpPost("PostAttacco")]
+
+        public async Task<ActionResult> PostAttacco(int idAttaccato, int idAttaccante)
+        {
+            var attaccato = await _dataAccess.GetPersonaggioInPartitaByIdFromDb(idAttaccato);
+            var attaccante = await _dataAccess.GetPersonaggioInPartitaByIdFromDb(idAttaccante);
+            attaccato.PuntiVitaPersonaggio -= attaccante.Attacco_InPartita;
+
+            if(attaccato.PuntiVitaPersonaggio <0)
+                attaccato.PuntiVitaPersonaggio = 0;
+
+            var updateAttaccato = attaccato;
+
+            var result = await _dataAccess.UpdatePersonaggioInPartitaByIdToDb(updateAttaccato);
+            
+            if (result==0)
+                return BadRequest($"La chiamata al metodo PostAttacco non ha modificato nulla a database. I campi passati in input sono idAttaccato:{idAttaccato} e idAttaccante:{idAttaccante}");
+            else
+                return Ok();
+        }
+
 
 
     }
