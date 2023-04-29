@@ -20,16 +20,6 @@ namespace OPG_API.Controllers
             _dataAccess = da;
         }
 
-        [HttpGet("GetCombattimentoById")]
-
-        public async Task<ActionResult<Combattimento?>> GetAllCombattimentoById(int idCombattimento)
-        {
-            var resp = await _dataAccess.GetCombattimentoByIdFromDb(idCombattimento);
-            if(resp is not null)
-                return Ok(resp);
-            else 
-                return BadRequest("l'Id combattimento richiesto non è presente a database.");
-        }
 
         [HttpGet("GetAllCombattimenti")]
 

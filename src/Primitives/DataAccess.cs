@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -381,7 +382,14 @@ namespace Primitives
                 comb.Nome = r.GetString(1);
                 combattimenti.Add(comb);
             }
-            return combattimenti;
+            var combattimentiTotale = new List<Combattimento>();
+            foreach(var c in combattimenti)
+            {
+                var comb = await GetCombattimentoByIdFromDb(c.Id);
+                if (comb is not null )
+                combattimentiTotale.Add(comb);   
+            }
+            return combattimentiTotale;
         }
 
         public async Task<string> PostAttaccoToDB(int attaccato, int attaccante)
