@@ -14,7 +14,7 @@ namespace OPG_API
         public static IServiceCollection AddDefaultDependencies(this IServiceCollection services)
         {
             services.AddSingleton<DataAccess>();
-            services.AddSingleton<Mappa>();
+            //services.AddSingleton<Mappa>();
 
             //services.AddSingleton<IManageablePlant, PlantManager>();
             
@@ -38,4 +38,4 @@ namespace OPG_API
     }
 }
 
-}
+

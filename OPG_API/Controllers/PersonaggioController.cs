@@ -1,3 +1,4 @@
+using Core;
 using Microsoft.AspNetCore.Mvc;
 
 using Primitives;
@@ -39,5 +40,11 @@ namespace OPG_API.Controllers
             return await _dataAccess.GetAllNpcsFromDb();
         }
 
+        [HttpGet("GetCount")]
+        public async Task<int> GetCount()
+        {
+            var conto = Mappa.Counto;
+            return conto;
+        }
     }
 }
