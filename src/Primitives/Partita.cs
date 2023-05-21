@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace Primitives
 {
-        public class Partita
-        {
-            public int Id { get; set; }
-            public int IdGiocatore { get; set; }
-            public string StatoPartita { get; set; } = string.Empty;
-        public int? IdPersonaggioPartita { get; set; }
-            public int? IdMostro { get; set; }
-            public int PosizioneX { get; set; }
-            public int PosizioneY { get; set; }
-            public int PuntiVita { get; set; }
-            public DateTime TimestampUltimoSalvataggio { get; set; } = DateTime.MinValue;
-        }
+    public class Partita
+    {
+        public Partita() { }    
+
+        public int Id { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public int IdObiettivo { get; set; } = 0; //per il momento rimane a 0 
+        public int Difficolta { get; set; } = 0; //per il momento rimane a 0 
+        public int StatoPartita { get; set; } = 0; // 1 nuova, 2 esecuzione, 3 terminata
+        public DateTime? DataInizioPartita { get; set; }
+        public DateTime? DataFinePartita { get; set; }
+        public IEnumerable<int> PersonaggiInGioco { get; set; } = new List<int>();
+
+    }
 }

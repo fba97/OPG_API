@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
+using OPG_API;
 using Primitives;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<DataAccess>();
+builder.Services.AddDefaultDependencies();
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
@@ -19,6 +20,7 @@ builder.Services.AddCors(options =>
         builder => builder.WithOrigins("https://localhost:7087"));
 });
 
+ 
 
 
 var app = builder.Build();

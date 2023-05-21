@@ -25,6 +25,46 @@ namespace Primitives
             _connString = connectionString;
         }
 
+        public async Task AddPersonaggioInPartotaToDb(PersonaggioBase pgBase, int idPartita)
+        {
+            string query = @"INSERT INTO [dbo].[Personaggi_In_Partita]
+                                  ([id_personaggio_base]
+                                  ,[id_partita]
+                                  ,[taglia]
+                                  ,[livello]
+                                  ,[tipo_personaggio]
+                                  ,[posizione_x_personaggio]
+                                  ,[posizione_y_personaggio]
+                                  ,[punti_vita]
+                                  ,[attacco]
+                                  ,[difesa]
+                                  ,[stato])
+                            VALUES
+                                  (@idPersonaggioBase
+                                  ,@idPartita
+                                  ,0
+                                  ,0
+                                  ,1
+                                  ,0
+                                  ,0
+                                  ,@puntiVita
+                                  ,@attacco
+                                  ,@difesa
+                                  ,@stato)";
+
+            await using var conn = new SqlConnection(_connString);
+            await using var cmd = new SqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@idPersonaggioBase", pgBase.Id);
+            cmd.Parameters.AddWithValue("@idPartita", idPartita);
+            cmd.Parameters.AddWithValue("@puntiVita", pgBase.PuntiVitaMassimi);
+            cmd.Parameters.AddWithValue("@attacco", pgBase.Attacco);
+            cmd.Parameters.AddWithValue("@difesa", pgBase.Difesa);
+            cmd.Parameters.AddWithValue("@stato", "");
+
+            await conn.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
+        }
         public async Task<IEnumerable<PersonaggioBase>> GetAllPersonaggiBaseFromDb()
         {
             string getFromDB = @"SELECT [id_personaggio]
