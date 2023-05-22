@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Data;
 using Primitives;
 using Core.Base_Repositories;
+using Core.Base;
 
 namespace Core
 {
@@ -94,77 +95,71 @@ namespace Core
          {
             new SqlParameter
             {
-                ParameterName = _id,
-                Value = element.Id,
+                ParameterName = "@_IdPersonaggioPartita",
+                Value = element.IdPersonaggioPartita,
                 Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = _code,
-                Value = element.Code,
+                ParameterName = "@_IdPartita",
+                Value = element.IdPartita,
                 Size = 50,
                 Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = "@Descrizione",
-                Value = element.Description,
+                ParameterName = "@Livello",
+                Value = element.Livello,
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Id_Unita_Misura",
-                Value = element.UnitOfMeasurementId.CoalesceNullToDBNull(),
+                ParameterName = "@TipoPersonaggio",
+                Value = element.TipoPersonaggio,
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Barcode",
-                Value = element.Barcode.CoalesceNullToDBNull(),
+                ParameterName = "@PosizioneXPersonaggio",
+                Value = element.PosizioneXPersonaggio.CoalesceNullToDBNull(),
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Qta_Massima_Udc",
-                Value = element.MaxLuQty.CoalesceNullToDBNull(),
+                ParameterName = "@PosizioneYPersonaggio",
+                Value = element.PosizioneYPersonaggio.CoalesceNullToDBNull(),
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Peso",
-                Value = element.Weight.CoalesceNullToDBNull(),
+                ParameterName = "@PuntiVitaPersonaggio",
+                Value = element.PuntiVitaPersonaggio,
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Indice_Rotazione",
-                Value = element.RotationIndex.CoalesceNullToDBNull(),
+                ParameterName = "@Attacco_InPartita",
+                Value = element.Attacco_InPartita,
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Data_Importazione",
-                Value = element.ImportDate.CoalesceNullToDBNull(),
+                ParameterName = "@Difesa_InPartita",
+                Value = element.Difesa_InPartita,
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Data_Creazione",
-                Value = element.InsertDate.CoalesceNullToDBNull(),
+                ParameterName = "@Stato",
+                Value = element.Stato.CoalesceNullToDBNull(),
                 Direction = ParameterDirection.Input
             },
             new SqlParameter
             {
-                ParameterName = "@Data_Aggiornamento",
-                Value = element.UpdateDate.CoalesceNullToDBNull(),
+                ParameterName = "@Taglia",
+                Value = element.Taglia.CoalesceNullToDBNull(),
                 Direction = ParameterDirection.Input
-            },
-            new SqlParameter
-            {
-                ParameterName = "@Id_Categoria",
-                Value = element.CategoryId.CoalesceNullToDBNull(),
-                Direction = ParameterDirection.Input
-            }
+            }         
          };
 
         protected override PersonaggioInPartita GetElement(SqlParameterCollection collection)
