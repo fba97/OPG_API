@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Primitives
+namespace Core.Primitives
 {
-    public class PersonaggioInPartita : PersonaggioBase 
+    public class PersonaggioInPartita : PersonaggioBase, IRepositoryItem, IUniqueCodeRepositoryItem
     {
+        public PersonaggioInPartita() : base() { }
         public PersonaggioInPartita(int id, string nome, int puntiVitaMassimi, int attacco, int difesa, string descrizione, int idPersonaggioPartita, int idPartita, int livello, int tipoPersonaggio, int posizioneXPersonaggio, int posizioneYPersonaggio, int puntiVitaPersonaggio, int attacco_InPartita, int difesa_InPartita, Stato stato, int taglia) :base(id, nome, puntiVitaMassimi, attacco, difesa, descrizione)
         {
             IdPersonaggioPartita = idPersonaggioPartita;
@@ -23,8 +25,6 @@ namespace Primitives
             Taglia = taglia;
         }
 
-        public PersonaggioInPartita() : base() { }
-
         public int IdPersonaggioPartita { get; set; }
         public int IdPartita { get; set; }
         public int Livello { get; set; }
@@ -37,7 +37,9 @@ namespace Primitives
         public Stato Stato { get; set; } = new Stato();
         public int Taglia { get; set; }
 
-  
+        public string Code => throw new NotImplementedException();
+
+
         //public virtual PersonaggioBase PersonaggioBase { get; set; }
     }
 

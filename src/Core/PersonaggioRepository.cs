@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Data;
-using Primitives;
 using Core.Base_Repositories;
 using Core.Base;
+using Microsoft.Data.SqlClient;
+using Core.Primitives;
 
 namespace Core
 {
@@ -21,73 +21,46 @@ namespace Core
 
         protected override UnitOfWork UnitOfWork { get; }
 
-        protected override string GetElements => _get;
+        protected override string GetElementByCode => throw new NotImplementedException();
 
-        protected override string GetElementById => _getById;
+        protected override string DeleteElementByCode => throw new NotImplementedException();
 
-        protected override string GetElementByCode => _getByCode;
+        protected override string UpdateElementByCode => throw new NotImplementedException();
 
-        protected override string AddElement => _add;
+        protected override string AddElement => throw new NotImplementedException();
 
-        protected override string UpdateElementById => _updateById;
-        
-        protected override string UpdateElementByCode => _updateByCode;
+        protected override string UpdateElementById => throw new NotImplementedException();
 
-        protected override string DeleteElementById => _deleteById;
+        protected override string DeleteElementById => throw new NotImplementedException();
 
-        protected override string DeleteElementByCode => _deleteByCode;
+        protected override string GetElementById => throw new NotImplementedException();
 
+        protected override string GetElements => throw new NotImplementedException();
 
-        private const string _table = "[Articoli]";
-
-        private const string _barcode = "@Barcode";
-
-        private const string _byId = " WHERE Id_Articolo = " + _id;
-        private const string _byCode = " WHERE Codice = " + _code;
-        private const string _byBarcode = " WHERE Barcode = " + _barcode;
-
-        private const string _get = "SELECT Id_Articolo,Codice,Descrizione,Id_Unita_Misura,Barcode,Qta_Massima_Udc,Peso,Indice_Rotazione,Data_Importazione,Data_Creazione,Data_Aggiornamento,Id_Categoria FROM " + _table;
-        private const string _getById = _get + _byId;
-        private const string _getByCode = _get + _byCode;
-        private const string _getByBarcode = _get + _byBarcode;
-
-        private const string _add = "INSERT INTO " + _table
-            + " (Codice,Descrizione,Id_Unita_Misura,Barcode,Qta_Massima_Udc,Peso,Indice_Rotazione,Data_Importazione,Data_Creazione,Data_Aggiornamento,Id_Categoria)"
-            + " VALUES "
-            + " (@Code,@Descrizione,@Id_Unita_Misura,@Barcode,@Qta_Massima_Udc,@Peso,@Indice_Rotazione,@Data_Importazione,@Data_Creazione,@Data_Aggiornamento,@Id_Categoria)"
-            + " SET @Id = SCOPE_IDENTITY() ";
-
-        private const string _updateById = "UPDATE " + _table
-            + " SET"
-            + "  Descrizione = @Descrizione,"
-            + "  Id_Unita_Misura = @Id_Unita_Misura,"
-            + "  Barcode = @Barcode,"
-            + "  Qta_Massima_Udc = @Qta_Massima_Udc,"
-            + "  Peso = @Peso,"
-            + "  Indice_Rotazione = @Indice_Rotazione,"
-            + "  Data_Importazione = @Data_Importazione,"
-            + "  Data_Creazione = @Data_Creazione,"
-            + "  Data_Aggiornamento = @Data_Aggiornamento,"
-            + "  Id_Categoria = @Id_Categoria"
-            + _byId;
-
-        private const string _updateByCode = "UPDATE " + _table
-            + " SET"
-            + "  Descrizione = @Descrizione,"
-            + "  Id_Unita_Misura = @Id_Unita_Misura,"
-            + "  Barcode = @Barcode,"
-            + "  Qta_Massima_Udc = @Qta_Massima_Udc,"
-            + "  Peso = @Peso,"
-            + "  Indice_Rotazione = @Indice_Rotazione"
-            + "  Data_Importazione = @Data_Importazione,"
-            + "  Data_Creazione = @Data_Creazione,"
-            + "  Data_Aggiornamento = @Data_Aggiornamento,"
-            + "  Id_Categoria = @Id_Categoria"
-            + _byCode;
-
-        private const string _delete = "DELETE " + _table;
-        private const string _deleteById = _delete + _byId;
-        private const string _deleteByCode = _delete + _byCode;
+        protected string getPersonaggioById = @" SELECT 
+                                            	   PB.[id_personaggio]
+                                            	  ,PB.[nome]
+                                            	  ,Pb.[punti_vita_massimi]
+                                            	  ,PB.[attacco]
+                                            	  ,PB.[difesa]
+                                                  ,PB.[Descrizione]
+                                                  ,PP.[id_personaggio_partita]
+                                                  ,PP.[id_partita]
+                                                  ,PP.[livello]
+                                                  ,PP.[tipo_personaggio]
+                                                  ,PP.[posizione_x_personaggio]
+                                                  ,PP.[posizione_y_personaggio]
+                                                  ,PP.[punti_vita]
+                                                  ,PP.[attacco]
+                                                  ,PP.[difesa]
+                                                  ,PP.[stato]
+                                                  ,PP.[taglia]
+                                            
+                                              FROM [dbo].[Personaggi_In_Partita] PP
+                                              LEFT JOIN 
+                                              [dbo].[Personaggi_Base] PB
+                                            	ON PP.id_personaggio_base = PB.id_personaggio
+									        	where id_personaggio" + _id;
 
 
         protected override SqlParameter[] GetParameters(PersonaggioInPartita element)
@@ -95,8 +68,8 @@ namespace Core
          {
             new SqlParameter
             {
-                ParameterName = "@_IdPersonaggioPartita",
-                Value = element.IdPersonaggioPartita,
+                ParameterName = _id,
+                Value = element.Id,
                 Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
@@ -163,20 +136,25 @@ namespace Core
          };
 
         protected override PersonaggioInPartita GetElement(SqlParameterCollection collection)
-         => new 
+            => new
             (
-               (int)collection[0].Value,
-               (string)collection[1].Value,
-               (string)collection[2].Value,
-               (string?)collection[3].ParseFromDbNullable(),
-               (string?)collection[4].ParseFromDbNullable(),
-               (decimal?)collection[5].ParseFromDbNullable(),
-               (decimal?)collection[6].ParseFromDbNullable(),
-               ((string?)collection[7].ParseFromDbNullable())?.FirstOrDefault(),
-               (DateTime?)collection[8].ParseFromDbNullable(),
-               (DateTime?)collection[9].ParseFromDbNullable(),
-               (DateTime?)collection[10].ParseFromDbNullable(),
-               (int?)collection[11].ParseFromDbNullable()
+                (int)collection[0].Value,
+                (string)collection[1].Value,
+                (int)collection[2].Value,
+                (int)collection[3].Value,
+                (int)collection[4].Value,
+                (string?)collection[5].ParseFromDbNullable(),
+                (int)collection[6].Value,
+                (int)collection[7].Value,
+                (int)collection[8].Value,
+                (int)collection[9].Value,
+                (int)collection[10].Value,
+                (int)collection[11].Value,
+                (int)collection[12].Value,
+                (int)collection[13].Value,
+                (int)collection[14].Value,
+                (Stato)collection[15].Value,
+                (int)collection[16].Value
             );
 
         protected override PersonaggioInPartita ParseReader(SqlDataReader r)
@@ -184,22 +162,27 @@ namespace Core
             (
                r.GetInt32(0),
                r.GetString(1),
-               r.GetString(2),
-               r.IsDBNull(3) ? null : r.GetString(3),
-               r.IsDBNull(4) ? null : r.GetString(4),
-               r.IsDBNull(5) ? null : r.GetDecimal(5),
-               r.IsDBNull(6) ? null : r.GetDecimal(6),
-               r.IsDBNull(7) ? null : r.GetString(7).FirstOrDefault(),
-               r.IsDBNull(8) ? null : r.GetDateTime(8),
-               r.IsDBNull(9) ? null : r.GetDateTime(9),
-               r.IsDBNull(10) ? null : r.GetDateTime(10),
-               r.IsDBNull(11) ? null : r.GetInt32(11)
+               r.GetInt32(2),
+               r.GetInt32(3),
+               r.GetInt32(4),
+               r.IsDBNull(5) ? null : r.GetString(5),
+               r.GetInt32(6),
+               r.GetInt32(7),
+               r.GetInt32(8),
+               r.GetInt32(9),
+               r.GetInt32(10),
+               r.GetInt32(11),
+               r.GetInt32(12),
+               r.GetInt32(13),
+               r.GetInt32(14),
+               new Stato(),
+               r.GetInt32(14)
             );
 
         public PersonaggioInPartita? GetById(int id)
         {
             using var cmd = UnitOfWork.GetCommand();
-            cmd.CommandText = _byId;
+            cmd.CommandText = getPersonaggioById;
             cmd.Parameters.AddWithValue(_id, id);
 
             using var r = cmd.ExecuteReader();
@@ -213,13 +196,14 @@ namespace Core
         public async Task<PersonaggioInPartita?> GetByIdAsync(int id, CancellationToken token = default)
         {
             await using var cmd = await UnitOfWork.GetCommandAsync(token);
-            cmd.CommandText = _byId;
+            cmd.CommandText = getPersonaggioById;
             cmd.Parameters.AddWithValue(_id, id);
 
             using var r = await cmd.ExecuteReaderAsync(token);
 
             if (r.HasRows && await r.ReadAsync(token))
                 return ParseReader(r);
+            
             else
                 return null;
         }      

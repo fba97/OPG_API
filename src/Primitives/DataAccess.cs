@@ -25,7 +25,7 @@ namespace Primitives
             _connString = connectionString;
         }
 
-        public async Task AddPersonaggioInPartotaToDb(PersonaggioBase pgBase, int idPartita)
+        public async Task AddPersonaggioInPartiotaToDb(PersonaggioBase pgBase, int idPartita)
         {
             string query = @"INSERT INTO [dbo].[Personaggi_In_Partita]
                                   ([id_personaggio_base]
@@ -90,15 +90,13 @@ namespace Primitives
 
             while (await r.ReadAsync())
             {
-                allCharacter.Add(new PersonaggioBase
-                {
-                    Id = r.GetInt32(0),
-                    Nome = r.GetString(1),
-                    PuntiVitaMassimi = r.GetInt32(2),
-                    Attacco = r.GetInt32(3),
-                    Difesa = r.GetInt32(4),
-                    Descrizione = r.IsDBNull(5) ? string.Empty : r.GetString(5)
-                }); ;
+                allCharacter.Add(new PersonaggioBase(r.GetInt32(0),
+                    r.GetString(1),
+                    r.GetInt32(2),
+                    r.GetInt32(3),
+                    r.GetInt32(4),
+                   r.IsDBNull(5) ? string.Empty : r.GetString(5))
+                ); 
             }
 
             return allCharacter;
@@ -141,7 +139,7 @@ namespace Primitives
 
             using var r = await cmd.ExecuteReaderAsync();
 
-            var pgInPartita = new PersonaggioInPartita();
+            PersonaggioInPartita pgInPartita = new();
 
             while (await r.ReadAsync())
             {

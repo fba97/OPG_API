@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Base;
 using Primitives;
 using System.Numerics;
 
@@ -28,7 +29,7 @@ namespace OPG_API
 
             //services.AddSingleton<MissionManager>();
             
-            //services.AddUnitOfWork();
+            services.AddUnitOfWork();
 
             return services;
         }

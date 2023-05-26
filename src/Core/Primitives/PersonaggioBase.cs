@@ -1,15 +1,15 @@
-﻿namespace Primitives
+﻿namespace Core.Primitives
 {
     public class PersonaggioBase
     {
-        public PersonaggioBase(int id, string nome, int puntiVitaMassimi, int attacco, int difesa, string? descrizione)
+        public PersonaggioBase(int id, string nome, int puntiVitaMassimi, int attacco, int difesa, string descrizione)
         {
             Id = id;
             Nome = nome;
             PuntiVitaMassimi = puntiVitaMassimi;
             Attacco = attacco;
             Difesa = difesa;
-            Descrizione = descrizione ?? string.Empty;
+            Descrizione = descrizione;
         }
 
         public PersonaggioBase() { }
