@@ -37,7 +37,7 @@ namespace Core.Primitives
         public Stato Stato { get; set; } = new Stato();
         public int Taglia { get; set; }
 
-        public string Code => throw new NotImplementedException();
+        public string Code => "";
 
 
         //public virtual PersonaggioBase PersonaggioBase { get; set; }

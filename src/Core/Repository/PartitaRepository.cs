@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Runtime.CompilerServices;
-using System.Data;
+﻿using Core.Base;
 using Core.Base_Repositories;
-using Core.Base;
 using Microsoft.Data.SqlClient;
-using Core.Primitives;
+using Primitives;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Core
+namespace Core.Repository
 {
-    public class PersonaggioRepository : BaseCompleteRepository<PersonaggioInPartita>, IPersonaggioRepository
+    public class PartitaRepository : BaseCompleteRepository<Partita>, IPersonaggioRepository
     {
-        public PersonaggioRepository(UnitOfWork unitOfWork)
+        public PartitaRepository(UnitOfWork unitOfWork)
         {
             UnitOfWork = unitOfWork;
         }
@@ -63,7 +63,7 @@ namespace Core
 									        	where id_personaggio = " + _id;
 
 
-        protected override SqlParameter[] GetParameters(PersonaggioInPartita element)
+        protected override SqlParameter[] GetParameters(Partita element)
          => new SqlParameter[]
          {
             new SqlParameter
@@ -74,68 +74,56 @@ namespace Core
             },
             new SqlParameter
             {
-                ParameterName = "@_IdPartita",
-                Value = element.IdPartita,
+                ParameterName = "@nome",
+                Value = element.Nome,
                 Size = 50,
                 Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = "@Livello",
-                Value = element.Livello,
-                Direction = ParameterDirection.Input
+                ParameterName = "@IdObiettivo",
+                Value = element.IdObiettivo,
+                Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = "@TipoPersonaggio",
-                Value = element.TipoPersonaggio,
-                Direction = ParameterDirection.Input
+                ParameterName = "@Difficolta",
+                Value = element.Difficolta,
+                Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = "@PosizioneXPersonaggio",
-                Value = element.PosizioneXPersonaggio.CoalesceNullToDBNull(),
-                Direction = ParameterDirection.Input
+                ParameterName = "@StatoPartita",
+                Value = element.StatoPartita,
+                Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = "@PosizioneYPersonaggio",
-                Value = element.PosizioneYPersonaggio.CoalesceNullToDBNull(),
-                Direction = ParameterDirection.Input
+                ParameterName = "@DataInizioPartita",
+                Value = element.DataInizioPartita.CoalesceNullToDBNull(),
+                Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = "@PuntiVitaPersonaggio",
-                Value = element.PuntiVitaPersonaggio,
-                Direction = ParameterDirection.Input
+                ParameterName = "@DataFinePartita",
+                Value = element.DataFinePartita.CoalesceNullToDBNull(),
+                Direction = ParameterDirection.InputOutput
             },
             new SqlParameter
             {
-                ParameterName = "@Attacco_InPartita",
-                Value = element.Attacco_InPartita,
-                Direction = ParameterDirection.Input
+                ParameterName = "@PersonaggiInGioco",
+                Value = element.PersonaggiInGioco,
+                Direction = ParameterDirection.InputOutput
             },
-            new SqlParameter
+                   new SqlParameter
             {
-                ParameterName = "@Difesa_InPartita",
-                Value = element.Difesa_InPartita,
-                Direction = ParameterDirection.Input
-            },
-            new SqlParameter
-            {
-                ParameterName = "@Stato",
-                Value = element.Stato.CoalesceNullToDBNull(),
-                Direction = ParameterDirection.Input
-            },
-            new SqlParameter
-            {
-                ParameterName = "@Taglia",
-                Value = element.Taglia.CoalesceNullToDBNull(),
-                Direction = ParameterDirection.Input
-            }         
+                ParameterName = "@OggettiInGioco",
+                Value = element.OggettiInGioco,
+                Direction = ParameterDirection.InputOutput
+            }
          };
 
-        protected override PersonaggioInPartita GetElement(SqlParameterCollection collection)
+        protected override Partita GetElement(SqlParameterCollection collection)
             => new
             (
                 (int)collection[0].Value,
@@ -143,43 +131,28 @@ namespace Core
                 (int)collection[2].Value,
                 (int)collection[3].Value,
                 (int)collection[4].Value,
-                (string?)collection[5].ParseFromDbNullable(),
-                (int)collection[6].Value,
-                (int)collection[7].Value,
-                (int)collection[8].Value,
-                (int)collection[9].Value,
-                (int)collection[10].Value,
-                (int)collection[11].Value,
-                (int)collection[12].Value,
-                (int)collection[13].Value,
-                (int)collection[14].Value,
-                (Stato)collection[15].Value,
-                (int)collection[16].Value
+                (DateTime?)collection[5].ParseFromDbNullable(),
+                (DateTime?)collection[6].ParseFromDbNullable(),
+                (List<int>)collection[7].Value,
+                (List<int>)collection[8].Value
             );
 
-        protected override PersonaggioInPartita ParseReader(SqlDataReader r)
-         => new 
+        protected override Partita ParseReader(SqlDataReader r)
+         => new
             (
                r.GetInt32(0),
                r.GetString(1),
                r.GetInt32(2),
                r.GetInt32(3),
                r.GetInt32(4),
-               r.IsDBNull(5) ? null : r.GetString(5),
-               r.GetInt32(6),
+               r.IsDBNull(5) ? null : r.GetDateTime(5),
+               r.IsDBNull(6) ? null : r.GetDateTime(6),
                r.GetInt32(7),
-               r.GetInt32(8),
-               r.GetInt32(9),
-               r.GetInt32(10),
-               r.GetInt32(11),
-               r.GetInt32(12),
-               r.GetInt32(13),
-               r.GetInt32(14),
-               new Stato(),
-               r.GetInt32(14)
+               r.Get(8),
+               r.Get(9)            
             );
 
-        public PersonaggioInPartita? GetById(int id)
+        public Partita? GetById(int id)
         {
             using var cmd = UnitOfWork.GetCommand();
             cmd.CommandText = getPersonaggioById;
@@ -193,7 +166,7 @@ namespace Core
                 return null;
         }
 
-        public async Task<PersonaggioInPartita?> GetByIdAsync(int id, CancellationToken token = default)
+        public async Task<Partita?> GetByIdAsync(int id, CancellationToken token = default)
         {
             await using var cmd = await UnitOfWork.GetCommandAsync(token);
             cmd.CommandText = getPersonaggioById;
@@ -203,10 +176,9 @@ namespace Core
 
             if (r.HasRows && await r.ReadAsync(token))
                 return ParseReader(r);
-            
+
             else
                 return null;
-        }      
+        }
     }
-
 }
