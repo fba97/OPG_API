@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Threading;
 using Microsoft.Data.SqlClient;
+using Core.Repository;
 
 namespace Core.Base
 {
@@ -25,6 +26,7 @@ namespace Core.Base
         Task<SqlCommand> GetCommandAsync(CancellationToken token = default);
 
         IPersonaggioRepository PersonaggioRepository { get; }
+        IPartitaRepository PartitaRepository { get; }
 
     }
 }

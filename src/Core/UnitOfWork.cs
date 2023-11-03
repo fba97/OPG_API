@@ -5,6 +5,7 @@ using System.Reflection.Metadata;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.Repository;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,8 @@ namespace Core.Base
             _connString = configuration.GetConnectionString("sqlStringConnection");
 
             PersonaggioRepository = new PersonaggioRepository(this);
+            PartitaRepository = new PartitaRepository(this);
+
         }
 
         public UnitOfWork(string connString)
@@ -55,9 +58,12 @@ namespace Core.Base
             _connString = connString;
 
             PersonaggioRepository = new PersonaggioRepository(this);
+
+            PartitaRepository = new PartitaRepository(this);
         }
 
         public IPersonaggioRepository PersonaggioRepository { get; }
+        public IPartitaRepository PartitaRepository { get; }    
 
         public SqlCommand GetCommand()
         {
