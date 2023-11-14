@@ -1,5 +1,5 @@
-﻿using Core;
-using Core.Base;
+﻿using Core.Base;
+using Core.Game;
 using Primitives;
 using System.Numerics;
 
@@ -15,12 +15,12 @@ namespace OPG_API
         public static IServiceCollection AddDefaultDependencies(this IServiceCollection services)
         {
             services.AddSingleton<DataAccess>();
-            //services.AddSingleton<Mappa>();
+            services.AddSingleton<Game>();
 
             //services.AddSingleton<IManageablePlant, PlantManager>();
             
             //services.AddSingleton<IItemFactory, ItemFactory>();
-
+            
             //services.AddSingleton<IPathFinder, SingleAgentPathFinder>();
 
             //services.AddSingleton<IFactory<ILoadingUnitMissionBuilder>, LoadingUnitMissionBuilderFactory>();

@@ -39,7 +39,20 @@ namespace Core.Repository
                                                 
                                                 FROM[OPG_DB].[dbo].[Partite] 
                                                 WHERE Id = @id";
+        
 
+        private const string _GetAllPartite = @"SELECT
+                                                 [Id]
+                                                ,[Id_giocatore]
+                                                ,[Stato]
+                                                ,[Nome]
+                                                ,[Data_Creazione]
+                                                ,[Data_ultimo_Salvataggio]
+                                                ,[Difficolta]
+                                                ,[Id_Obiettivo]
+                                                ,[Data_Fine_Partita]
+                                                
+                                                FROM[OPG_DB].[dbo].[Partite]";
 
         private const string _addPartita = @"INSERT INTO[dbo].[Partite]
                                                          ([Id_giocatore]
@@ -280,6 +293,43 @@ namespace Core.Repository
             cmd.Parameters.AddWithValue("@id", id);
 
             return cmd.ExecuteNonQuery();
+        }
+
+        public async Task<IEnumerable<Partita>> GetAllAsync(CancellationToken token = default)
+        {
+            using var cmd = UnitOfWork.GetCommand();
+            cmd.CommandText = _GetAllPartite;
+
+            var r = await cmd.ExecuteReaderAsync(token);
+            var allPartite = new List<Partita>();
+
+            while(!r.Read())
+            {
+                var idd = r.GetInt32("Id");
+                var Id_Giocatore = r.GetInt32("Id_giocatore");
+                var nome = r.IsDBNull("Nome") ? string.Empty : (string)r.GetString("Nome");
+                var idObiettivo = r.GetInt32("Id_Obiettivo");
+                var difficolta = r.GetInt32("Difficolta");
+                var statoPartita = r.GetInt32("Stato");
+                var dataInizioPartita = r.IsDBNull("Data_Creazione") ? null : (DateTime?)r.GetDateTime("Data_Creazione");
+                var dataFinePartita = r.IsDBNull("Data_Fine_Partita") ? null : (DateTime?)r.GetDateTime("Data_Fine_Partita");
+                var dataUltimoSalvataggio = r.IsDBNull("Data_ultimo_Salvataggio") ? null : (DateTime?)r.GetDateTime("Data_ultimo_Salvataggio");
+
+                allPartite.Add( new Partita
+                {
+                    Id = idd,
+                    Id_Giocatore = Id_Giocatore,
+                    Nome = nome,
+                    IdObiettivo = idObiettivo,
+                    Difficolta = difficolta,
+                    StatoPartita = statoPartita,
+                    DataInizioPartita = dataInizioPartita,
+                    DataFinePartita = dataFinePartita,
+                    DataUltimoSalvataggio = dataUltimoSalvataggio
+                });
+            }
+
+            return allPartite;  
         }
     }
 }

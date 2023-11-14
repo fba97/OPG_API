@@ -1,5 +1,5 @@
-using Core;
 using Core.Base;
+using Core.Game;
 using Microsoft.AspNetCore.Mvc;
 using Primitives;
 
@@ -47,7 +47,7 @@ namespace OPG_API.Controllers
         [HttpGet("GetCount")]
         public async Task<int> GetCount()
         {
-            var conto = Mappa.Counto;
+            var conto = Game.Counto;
             return conto;
         }
 

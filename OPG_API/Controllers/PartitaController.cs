@@ -27,8 +27,6 @@ namespace OPG_API.Controllers
 
         }
 
-
-
         [HttpGet("GetPartitaById")]
         public async Task<Core.Primitives.Partita?> GetPartitaById()
         {
@@ -36,6 +34,16 @@ namespace OPG_API.Controllers
             var partita = await uow.PartitaRepository.GetByIdAsync(9);
             return partita;
         }
+
+
+        [HttpGet("GetAllPartite")]
+        public async Task<IEnumerable<Core.Primitives.Partita>> GetAllPartite()
+        {
+            await using var uow = _services.GetUnitOfWork();
+            var partite = await uow.PartitaRepository.GetAllAsync();
+            return partite;
+        }
+
 
         [HttpPost("CreaPartita")]
 
@@ -53,5 +61,32 @@ namespace OPG_API.Controllers
             else
                 return Ok();
         }
+
+
+        [HttpPost("LoadPartitaById")]
+        // pulisci le tabelle della partita attuale e riempile con la partita scelta tramite id
+        public async Task<ActionResult> LoadPartita(int idPartita)
+        {
+            await using var uow = _services.GetUnitOfWork();
+            var partitaAggiunta = await uow.PartitaRepository.DeleteAsync(idPartita);
+
+            await uow.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
+        [HttpPost("CancellaPartitaById")]
+
+        public async Task<ActionResult> CancellaPartita(int idPartita)
+        {
+            await using var uow = _services.GetUnitOfWork();
+            var partitaAggiunta = await uow.PartitaRepository.DeleteAsync(idPartita);
+
+            await uow.SaveChangesAsync();
+            
+            return Ok();
+        }
+
     }
 }
