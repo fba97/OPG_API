@@ -11,18 +11,14 @@ namespace OPG_API.Controllers
     [Route("api/[controller]")]
     public class PartitaController : ControllerBase
     {
-
-
-        private readonly DataAccess _dataAccess;
         private readonly ILogger<PersonaggioController> _logger;
         private readonly IServiceProvider _services;
         
         
 
-        public PartitaController(ILogger<PersonaggioController> logger, DataAccess da, IServiceProvider services)
+        public PartitaController(ILogger<PersonaggioController> logger, IServiceProvider services)
         {
             _logger = logger;
-            _dataAccess = da;
             _services = services;
 
         }

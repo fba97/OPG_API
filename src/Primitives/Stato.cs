@@ -13,8 +13,5 @@ namespace Primitives
         public string Descrizione { get; set; } = string.Empty;
         public string Effetto { get; set; } = string.Empty;
         public int DurataTurni { get; set; }
-        public int IdPersonaggioPartita { get; set; }
-
-        //public virtual PersonaggioInPartita Personaggio { get; set; }
     }
 }

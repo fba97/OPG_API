@@ -14,7 +14,7 @@ namespace OPG_API
         /// <returns></returns>
         public static IServiceCollection AddDefaultDependencies(this IServiceCollection services)
         {
-            services.AddSingleton<DataAccess>();
+            //services.AddSingleton<DataAccess>();
             services.AddSingleton<Game>();
 
             //services.AddSingleton<IManageablePlant, PlantManager>();

@@ -17,145 +17,180 @@ namespace Core.Game
     public partial class Game
     {
 
-        private Mappa GetMappa()
+        private Mappa? GetMappa(int id_mappa)
         {
 
-            string stockQuery = @"SELECT [Id]
-                                     ,[Descrizione]
-                              FROM [dbo].[Mappe]";
-
             using var conn = new SqlConnection(_connString);
-            using var cmd = new SqlCommand(stockQuery, conn);
-            conn.Open();
+            using var cmd = new SqlCommand(@"SELECT [Id]
+                                                ,[Descrizione]
+                                            FROM [dbo].[Mappe]
+                                        WHERE Id = @idmappa", conn);
+
+            cmd.Parameters.AddWithValue("@idmappa", id_mappa);
+
             using var r = cmd.ExecuteReader();
-            var mappa = new Mappa();
             while (r.Read())
             {
+                int id = r.GetInt32(0);
+                string descrizione = r.GetString(1);
+
+                var aree = _aree.Where(i => i.Id_Mappa == id)
+                                    .ToArray();
+
+
+                return new Mappa(id, descrizione, aree);
             }
-            return mappa;
+            return null;
         }
 
+        private IEnumerable<Tessera> GetAllTessere()
+        {
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(@"SELECT [Id]
+                                                    ,[Id_Area]
+                                                    ,[Descrizione]
+                                                    ,[Tipo]
+                                                    ,[Configurazione]
+                                             FROM [dbo].[Tessere]", conn);
 
-        //private IEnumerable<Item> GetAllItems()
-        //{
-        //    var itemFactory = _services.GetRequiredService<IItemFactory>();
-        //    var itemQuery = "SELECT ID_COMPONENTE, ID_SOTTOAREA, CODICE_ABBREVIATO, DESCRIZIONE,  ID_TIPO_COMPONENTE, COMM_CHANNEL,"
-        //                + " Tipo, Configurazione"
-        //                + " FROM Componenti";
+            conn.Open();
 
-        //    using var conn = new SqlConnection(_connString);
-        //    using var cmd = new SqlCommand(itemQuery, conn);
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                int id = r.GetInt32(0);
+                int id_area = r.GetInt32(1);
+                string descrizione = r.GetString(2);
+                string comportamento = r.GetString(3);
+                string configurazione = r.GetString(4);
 
-        //    conn.Open();
-        //    using var r = cmd.ExecuteReader();
-        //    while (r.Read())
-        //    {
-        //        int id = r.GetInt32(0);
-        //        int subAreaId = r.GetInt32(1);
-        //        string code = r.GetString(2);
-        //        string description = r.GetString(3);
+                var punti = _punti.Where(i => i.Id_Tessera == id)
+                                    .ToArray();
 
-        //        var subItems = _subItems.Where(s => s.ItemId == id);
 
-        //        var type = ItemTypeUtils.GetItemTypeFromDbString(r.GetString(4));
-        //        int communicationChannelId = r.IsDBNull(5) ? 1 : r.GetInt32(5);
+                yield return new Tessera(id, id_area, descrizione, punti);
+            }
+        }
 
-        //        string? implementationType = r.IsDBNull(6) ? null : r.GetString(6);
-        //        IConfiguration? cfg = r.GetConfigurationFromJsonField(7);
+        private IEnumerable<Area> GetAllAree()
+        {
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(@"SELECT [Id]
+                                                    ,[Id_Mappa]
+                                                    ,[Descrizione]
+                                                    ,[Comportamento]
+                                                    ,[Configurazione]
+                                              FROM [dbo].[Aree]", conn);
 
-        //        yield return itemFactory
-        //            .CreateItem
-        //            (
-        //                id,
-        //                subAreaId,
-        //                code,
-        //                description,
-        //                subItems,
-        //                communicationChannelId,
-        //                type,
-        //                implementationType,
-        //                cfg
-        //             ).AsItem();
-        //    }
-        //}
+            conn.Open();
 
-        //private IEnumerable<SubArea> GetAllSubAreas()
-        //{
-        //    using var conn = new SqlConnection(_connString);
-        //    using var cmd = new SqlCommand("SELECT ID_SOTTOAREA, ID_AREA, CODICE_ABBREVIATO, DESCRIZIONE, ISNULL([COMPORTAMENTO],0) AS COMPORTAMENTO" +
-        //                                    " FROM SottoAree", conn);
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+            {
+                int id = r.GetInt32(0);
+                int id_mappa = r.GetInt32(1);
+                string descrizione = r.GetString(2);
+                string comportamento = r.GetString(3);
+                string configurazione = r.GetString(4);
 
-        //    conn.Open();
+                var tessere = _tessere.Where(i => i.Id_Area == id)
+                                    .ToArray();
 
-        //    using var r = cmd.ExecuteReader();
-        //    while (r.Read())
-        //    {
-        //        int id = r.GetInt32(0);
-        //        int areaId = r.GetInt32(1);
-        //        string code = r.GetString(2);
-        //        string description = r.GetString(3);
 
-        //        var items = _items.Where(i => i.SubAreaId == id)
-        //                            .ToArray();
-
-        //        var behaviour = (SubAreaBehaviour)r.GetInt32(4);
-
-        //        yield return new SubArea(id, areaId, code, description, items, behaviour);
-        //    }
-        //}
-
-        //private IEnumerable<Area> GetAllAreas()
-        //{
-        //    using var conn = new SqlConnection(_connString);
-        //    using var cmd = new SqlCommand("SELECT ID_AREA, ID_MAGAZZINO, CODICE_ABBREVIATO, DESCRIZIONE" +
-        //                                    " FROM Aree", conn);
-        //    conn.Open();
-
-        //    using var r = cmd.ExecuteReader();
-
-        //    while (r.Read())
-        //    {
-        //        int id = r.GetInt32(0);
-        //        int warehouseId = r.GetInt32(1);
-        //        string code = r.GetString(2);
-        //        string description = r.GetString(3);
-
-        //        var subAreas = _subAreas.Where(s => s.AreaId == id)
-        //                                .ToArray();
-
-        //        yield return new Area(id, warehouseId, code, description, subAreas);
-        //    }
-        //}
-
+                yield return new Area(id, id_mappa, descrizione, _tessere);
+            }
+        }
 
         private IEnumerable<Punto> GetAllPunti()
         {
-            //string partitionSelect = "SELECT  ID_PARTIZIONE, ID_SOTTOCOMPONENTE, CODICE_ABBREVIATO, DESCRIZIONE," +
-            //                                "LOCKED_INFEED, LOCKED_OUTFEED, Motivo_Blocco, PESO, ALTEZZA, LARGHEZZA, PROFONDITA, CAPIENZA " +
-            //                                "FROM  Partizioni WHERE Id_Tipo_Partizione <> 'OO' OR Codice_Abbreviato = '0000' OR Descrizione like '____.0000.____'";
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(@"SELECT [Id]
+                                                    ,[Id_Tessera]
+                                                    ,[Descrizione]
+                                                    ,[Tipo]
+                                                    ,[Capienza]
+                                                    ,[Blocco]
+                                             FROM [dbo].[Punti]", conn);
+            conn.Open();
 
-            //using var conn = new SqlConnection(_connString);
-            //using var cmd = new SqlCommand(partitionSelect, conn);
-            //conn.Open();
-            //using var r = cmd.ExecuteReader();
+            using var r = cmd.ExecuteReader();
 
-            //while (r.Read())
-            //{
-            //    int partitionId = r.GetInt32(0);
-            //    int subItemId = r.GetInt32(1);
-            //    string code = r.GetString(2);
-            //    string description = r.GetString(3);
-            //    bool infeedLock = !r.IsDBNull(4) && r.GetBoolean(4);
-            //    bool outfeedLock = !r.IsDBNull(5) && r.GetBoolean(5);
-            //    string? lockReason = r.IsDBNull(6) ? null : r.GetString(6);
-            //    int maxContentWeight = r.GetInt32(7);
-            //    var maxContentSize = new Size(r.GetInt32(8), r.GetInt32(9), r.GetInt32(10));
-            //    int capacity = r.GetInt32(11);
+            while (r.Read())
+            {
+                int id = r.GetInt32(0);
+                int id_tessera = r.GetInt32(1);
+                string descrizione = r.GetString(2);
+                int tipo = r.GetInt32(3);
+                int capienza = r.GetInt32(4);
+                bool blocco = r.GetBoolean(5);
 
-            //    yield return new Partition(partitionId, subItemId, code, description, infeedLock, outfeedLock, maxContentSize, capacity, lockReason, maxContentWeight);
-
-            //}
-            return new List<Punto>();
+                yield return new Punto(id, id_tessera, descrizione, capienza, blocco);
+            }
         }
+
+        private IEnumerable<Personaggio> GetAllPersonaggi()
+        {
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(@"SELECT [id_personaggio]
+                                                 ,[nome]
+                                                 ,[punti_vita]
+                                                 ,[attacco]
+                                                 ,[difesa]
+                                                 ,[Descrizione]
+                                                 ,[Tipo_Personaggio]
+                                                 ,[Id_Posizione]
+                                             FROM [dbo].[Personaggi]", conn);
+            conn.Open();
+
+            using var r = cmd.ExecuteReader();
+
+            while (r.Read())
+            {
+                int id = r.GetInt32("id_personaggio");
+                string nome = r.GetString("nome");
+                int punti_vita = r.GetInt32("punti_vita");
+                int attacco = r.GetInt32("attacco");
+                int difesa = r.GetInt32("difesa");
+                string descrizione = r.IsDBNull("Descrizione") ? string.Empty : r.GetString("Descrizione");
+                int tipo_personaggio = r.GetInt32("Tipo_Personaggio");
+                int id_posizione = r.GetInt32("Id_Posizione");
+
+
+                yield return new Personaggio(id,nome,punti_vita,attacco,difesa,descrizione,tipo_personaggio,id_posizione, taglia:0, livello:0);
+            }
+        }
+
+        private IEnumerable<Oggetto> GetAllOggetti()
+        {
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(@"SELECT [id_oggetto]
+                                                 ,[nome]
+                                                 ,[descrizione]
+                                                 ,[tipo]
+                                                 ,[bonus_attacco]
+                                                 ,[bonus_difesa]
+                                                 ,[Id_Posizione]
+                                                 ,[id_inventario]
+                                             FROM [dbo].[Oggetti]", conn);
+            conn.Open();
+
+            using var r = cmd.ExecuteReader();
+
+            while (r.Read())
+            {
+                int id_oggetto = r.GetInt32("id_oggetto");
+                string nome = r.GetString("nome");
+                string descrizione = r.IsDBNull("descrizione") ? string.Empty : r.GetString("Descrizione");
+                int tipo_oggetto = r.GetInt32("tipo");
+                int id_posizione = r.GetInt32("Id_Posizione");
+                int bonus_attacco = r.GetInt32("bonus_attacco");
+                int bonus_difesa = r.GetInt32("bonus_difesa");
+                int id_inventario = r.GetInt32("id_inventario");
+
+
+                yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, bonus_attacco, bonus_difesa, id_posizione, id_inventario);
+            }
+        }
+
     }
 }

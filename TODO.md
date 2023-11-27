@@ -36,4 +36,34 @@ in una tabella salvataggi: idSalvataggio, data, idPartita, json:
 
 
 
-da risistemare il personaggio_base e Personaggio_in_partita. i personaggi sono sempre gli stessi. sempre base. come gli oggetti. poi nelle partite salvate (un file json dentro ad una colonna di una tabela ) andrò a mettere i valori attuali nella partita.
+da risistemare il personaggio_base e Personaggio_in_partita. i personaggi sono sempre gli stessi. sempre base. come gli oggetti.
+
+
+
+## ULTIMO AGGIORNAMENTO DEL 26/11/2023
+le tabelle sono tutte base.
+Significa che non ci sono tabelle di oggetti_InPartita.
+quando si caricano i personaggi li si carica da db nell'oggetto game.
+quando devo creare la partita chiedo alcune informazioni all'utente. altre invece le crea l'init partita.
+quando si deve salvare la partita la si salva come json nella tabella salvataggi. quando devo caricarla li riprendo e deserializzo.
+
+azioni che devono fare i personaggi: movimenti, combattimenti, usare oggetti, raccogliere oggetti, scambiare oggetti
+
+
+
+1.1 - ok - modifica le tabelle a db -> togli tutte quelle in partita, aggiunti i punti con la loro id, tessere, mappe, aree
+1.2 - ok - modifica le primitives
+1.3 - ok - modifica l'accesso ai dati per riempire gli oggetti
+1.4 - modifica l'init della partita nella classe _game
+1.5 - 
+
+2.0 - crea il salva e il load della partita tramite serializzazione json
+
+
+
+Mentre scrivevo game.sql ho notato che la repository sono un po merdose. il dto partita non è nel progetto primitives.
+e mi sono chiesto a che cazzo servano le repo se tiro su tutto tramite game.sql
+quindi sarebbe possibile toglierle. 
+Per il momento le tengo lasciando il codice sporco perchè potrei doverle utilizzare.
+
+

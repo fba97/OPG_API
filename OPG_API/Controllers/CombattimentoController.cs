@@ -8,16 +8,11 @@ namespace OPG_API.Controllers
     [Route("api/[controller]")]
     public class CombattimentoController : ControllerBase
     {
-
-
-        private readonly DataAccess _dataAccess;
-
         private readonly ILogger<CombattimentoController> _logger;
 
-        public CombattimentoController(ILogger<CombattimentoController> logger, DataAccess da)
+        public CombattimentoController(ILogger<CombattimentoController> logger)
         {
             _logger = logger;
-            _dataAccess = da;
         }
 
 
@@ -25,8 +20,8 @@ namespace OPG_API.Controllers
 
         public async Task<ActionResult<IEnumerable<Combattimento>>> GetAllCombattimenti()
         {
-            
-            return Ok(await _dataAccess.GetAllCombattimentiFromDb());
+         //gli devo passare l'oggetto game dal quale prendo la lista dei combattimenti   
+            return Ok();
         }
 
 
@@ -34,20 +29,20 @@ namespace OPG_API.Controllers
 
         public async Task<ActionResult> PostAttacco(int idAttaccato, int idAttaccante)
         {
-            var attaccato = await _dataAccess.GetPersonaggioInPartitaByIdFromDb(idAttaccato);
-            var attaccante = await _dataAccess.GetPersonaggioInPartitaByIdFromDb(idAttaccante);
-            attaccato.PuntiVitaPersonaggio -= attaccante.Attacco_InPartita;
+            //var attaccato = await _dataAccess.GetPersonaggioInPartitaByIdFromDb(idAttaccato);
+            //var attaccante = await _dataAccess.GetPersonaggioInPartitaByIdFromDb(idAttaccante);
+            //attaccato.PuntiVitaPersonaggio -= attaccante.Attacco_InPartita;
 
-            if(attaccato.PuntiVitaPersonaggio <0)
-                attaccato.PuntiVitaPersonaggio = 0;
+            //if(attaccato.PuntiVitaPersonaggio <0)
+            //    attaccato.PuntiVitaPersonaggio = 0;
 
-            var updateAttaccato = attaccato;
+            //var updateAttaccato = attaccato;
 
-            var result = await _dataAccess.UpdatePersonaggioInPartitaByIdToDb(updateAttaccato);
+            //var result = await _dataAccess.UpdatePersonaggioInPartitaByIdToDb(updateAttaccato);
             
-            if (result==0)
-                return BadRequest($"La chiamata al metodo PostAttacco non ha modificato nulla a database. I campi passati in input sono idAttaccato:{idAttaccato} e idAttaccante:{idAttaccante}");
-            else
+            //if (result==0)
+            //    return BadRequest($"La chiamata al metodo PostAttacco non ha modificato nulla a database. I campi passati in input sono idAttaccato:{idAttaccato} e idAttaccante:{idAttaccante}");
+            //else
                 return Ok();
         }
 

@@ -8,9 +8,20 @@ namespace Primitives
 {
     public class Inventario
     {
-        public int Id { get; set; }
-        public int IdPersonaggioPartita { get; set; }
-        public List<int> ListaIdOggetti { get; set; } = new List<int>();    
+        public Inventario() { }
+        public Inventario(int id) 
+        {
+            Id = id;
+        }
+        public Inventario(int id, IEnumerable<Oggetto> listaIdOggetti) 
+        {
+            Id = id;
+            ListaIdOggetti = listaIdOggetti;
+        }
+
+
+        public int Id { get; set; } = 0;
+        public IEnumerable<Oggetto> ListaIdOggetti { get; set; } = new List<Oggetto>();
 
     }
 }

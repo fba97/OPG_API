@@ -9,7 +9,7 @@ namespace Primitives
 {
 
     [DataContract]
-    public class ResponseBase
+    public class Response
     {
         [DataMember]
         public bool Ok { get; set; } = true;

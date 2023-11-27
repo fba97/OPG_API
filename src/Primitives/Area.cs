@@ -10,15 +10,17 @@ namespace Primitives
     {
 
         public int Id { get; set; }
+        public int Id_Mappa { get; set; }
         public string Descrizione { get; set; } = string.Empty;
         public IEnumerable<Tessera> Tessere { get; internal set; }
 
         public Mappa LocatedIn { get; internal set; } = null!;
 
         public Mappa Parent => LocatedIn;
-        public Area(int id, string descrizione, IEnumerable<Tessera> tessere)
+        public Area(int id, int id_mappa, string descrizione, IEnumerable<Tessera> tessere)
         {
             Id = id;
+            Id_Mappa = id_mappa;
             Descrizione = descrizione;
             Tessere = tessere;
 

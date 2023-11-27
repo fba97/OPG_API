@@ -9,18 +9,14 @@ namespace OPG_API.Controllers
     [Route("api/[controller]")]
     public class PersonaggioController : ControllerBase
     {
-
-
-        private readonly DataAccess _dataAccess;
         private readonly ILogger<PersonaggioController> _logger;
         private readonly IServiceProvider _services;
         
         
 
-        public PersonaggioController(ILogger<PersonaggioController> logger, DataAccess da, IServiceProvider services)
+        public PersonaggioController(ILogger<PersonaggioController> logger, IServiceProvider services)
         {
             _logger = logger;
-            _dataAccess = da;
             _services = services;
 
         }
@@ -44,15 +40,9 @@ namespace OPG_API.Controllers
         //    return await _dataAccess.GetAllNpcsFromDb();
         //}
 
-        [HttpGet("GetCount")]
-        public async Task<int> GetCount()
-        {
-            var conto = Game.Counto;
-            return conto;
-        }
 
         [HttpGet("Getpersonaggio")]
-        public async Task<Core.Primitives.PersonaggioInPartita?> Getpersonaggio()
+        public async Task<Core.Primitives.Personaggio?> Getpersonaggio()
         {
             await using var uow = _services.GetUnitOfWork();
             var pg = await uow.PersonaggioRepository.GetByIdAsync(1);
