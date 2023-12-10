@@ -39,14 +39,12 @@ namespace OPG_API.Controllers
             //var updateAttaccato = attaccato;
 
             //var result = await _dataAccess.UpdatePersonaggioInPartitaByIdToDb(updateAttaccato);
-            
+
             //if (result==0)
             //    return BadRequest($"La chiamata al metodo PostAttacco non ha modificato nulla a database. I campi passati in input sono idAttaccato:{idAttaccato} e idAttaccante:{idAttaccante}");
             //else
-                return Ok();
+            return Ok();
         }
-
-
 
     }
 }

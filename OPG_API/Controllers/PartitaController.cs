@@ -3,7 +3,7 @@ using Core.Base;
 using Microsoft.AspNetCore.Mvc;
 using Primitives;
 using Core.Repository;
-using Core.Primitives;
+using Core.Game;
 
 namespace OPG_API.Controllers
 {
@@ -23,66 +23,103 @@ namespace OPG_API.Controllers
 
         }
 
-        [HttpGet("GetPartitaById")]
-        public async Task<Core.Primitives.Partita?> GetPartitaById()
+        //[HttpGet("GetPartitaById")]
+        //public async Task<Core.Primitives.Partita?> GetPartitaById()
+        //{
+        //    await using var uow = _services.GetUnitOfWork();
+        //    var partita = await uow.PartitaRepository.GetByIdAsync(9);
+        //    return partita;
+        //}
+
+
+        //[HttpGet("GetAllPartite")]
+        //public async Task<IEnumerable<Core.Primitives.Partita>> GetAllPartite()
+        //{
+        //    await using var uow = _services.GetUnitOfWork();
+        //    var partite = await uow.PartitaRepository.GetAllAsync();
+        //    return partite;
+        //}
+
+
+        //[HttpPost("CreaPartita")]
+
+        //public async Task<ActionResult> CreaPartita(int id_Giocatore, string nomePartita)
+        //{
+
+        //    await using var uow = _services.GetUnitOfWork();
+        //    var partita = new Core.Primitives.Partita(0, id_Giocatore, nomePartita, idObiettivo: 0, difficolta: 0, statoPartita: 1, dataInizioPartita: DateTime.Now, dataFinePartita: null, dataUltimoSalvataggio: null, oggettiInGioco: null, personaggiInGioco: null);
+        //    var partitaAggiunta = await uow.PartitaRepository.AddAsync(partita);
+
+        //    await uow.SaveChangesAsync();
+
+        //    if (partita is null)
+        //        return BadRequest($"La Partita non è stata creata.");
+        //    else
+        //        return Ok();
+        //}
+
+
+        //[HttpPost("LoadPartitaById")]
+        //// pulisci le tabelle della partita attuale e riempile con la partita scelta tramite id
+        //public async Task<ActionResult> LoadPartita(int idPartita)
+        //{
+        //    await using var uow = _services.GetUnitOfWork();
+        //    var partitaAggiunta = await uow.PartitaRepository.DeleteAsync(idPartita);
+
+        //    await uow.SaveChangesAsync();
+
+        //    return Ok();
+        //}
+
+
+        //[HttpPost("CancellaPartitaById")]
+
+        //public async Task<ActionResult> CancellaPartita(int idPartita)
+        //{
+        //    await using var uow = _services.GetUnitOfWork();
+        //    var partitaAggiunta = await uow.PartitaRepository.DeleteAsync(idPartita);
+
+        //    await uow.SaveChangesAsync();
+
+        //    return Ok();
+        //}
+
+
+        [HttpPost("StartGame")]
+
+        public async Task<ActionResult> StartGame(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore)
         {
-            await using var uow = _services.GetUnitOfWork();
-            var partita = await uow.PartitaRepository.GetByIdAsync(9);
-            return partita;
-        }
+            var game = _services.GetService<Game>();
 
-
-        [HttpGet("GetAllPartite")]
-        public async Task<IEnumerable<Core.Primitives.Partita>> GetAllPartite()
-        {
-            await using var uow = _services.GetUnitOfWork();
-            var partite = await uow.PartitaRepository.GetAllAsync();
-            return partite;
-        }
-
-
-        [HttpPost("CreaPartita")]
-
-        public async Task<ActionResult> CreaPartita(int id_Giocatore, string nomePartita)
-        {
-
-            await using var uow = _services.GetUnitOfWork();
-            var partita = new Core.Primitives.Partita(0, id_Giocatore, nomePartita, idObiettivo: 0, difficolta: 0, statoPartita: 1, dataInizioPartita: DateTime.Now, dataFinePartita: null, dataUltimoSalvataggio: null, oggettiInGioco: null, personaggiInGioco: null);
-            var partitaAggiunta = await uow.PartitaRepository.AddAsync(partita);
-
-            await uow.SaveChangesAsync();
-
-            if (partita is null)
-                return BadRequest($"La Partita non è stata creata.");
-            else
-                return Ok();
-        }
-
-
-        [HttpPost("LoadPartitaById")]
-        // pulisci le tabelle della partita attuale e riempile con la partita scelta tramite id
-        public async Task<ActionResult> LoadPartita(int idPartita)
-        {
-            await using var uow = _services.GetUnitOfWork();
-            var partitaAggiunta = await uow.PartitaRepository.DeleteAsync(idPartita);
-
-            await uow.SaveChangesAsync();
+            game.NewGame(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore);
 
             return Ok();
         }
 
+        [HttpPost("LoadGame")]
 
-        [HttpPost("CancellaPartitaById")]
-
-        public async Task<ActionResult> CancellaPartita(int idPartita)
+        public async Task<ActionResult> LoadGame(int idPartita)
         {
-            await using var uow = _services.GetUnitOfWork();
-            var partitaAggiunta = await uow.PartitaRepository.DeleteAsync(idPartita);
+            var game = _services.GetService<Game>();
 
-            await uow.SaveChangesAsync();
-            
+            game.LoadGame(idPartita);
+
             return Ok();
         }
+
+        [HttpPost("SaveGame")]
+
+        public async Task<ActionResult> SaveGame()
+        {
+            var game = _services.GetService<Game>();
+
+            var messaggio = game.SalvaPartita();
+
+            return Ok(messaggio);
+        }
+
+
+        
 
     }
 }

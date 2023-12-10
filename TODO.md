@@ -66,4 +66,16 @@ e mi sono chiesto a che cazzo servano le repo se tiro su tutto tramite game.sql
 quindi sarebbe possibile toglierle. 
 Per il momento le tengo lasciando il codice sporco perchè potrei doverle utilizzare.
 
+Infatti ho chiesto a nico e mi dice che il modogiusto sono le repository e non game.sql
 
+ma io me ne fotto e lo tiro su cosi al massimo farò un refactor.
+
+
+mi sono accorto che in game stavo facendo query per prendere tutti i personaggi e non solo quelli in partita.
+ho deciso che in game ho ALLpersonaggi, ALLOggetti, ALL mappe.. cosi se serve le faccio vedere al frontend oppure prendere oggetti a caso tra tutti gli oggetti..
+e in game.PartitaAttuale ho dentro la partita che carico o nuova. 
+e come faccio a prendere i personaggi nella partita? 
+--> tiro su il json che ha solo gli id dei personaggi e oggetti. e poi l'oggetto personaggio/oggetto lo prendo da game che li ha gia tutti.
+Anche se alcune proprietà vanno valorizzate come l'attacco gli oggetti assegnati. quindi per il momento serializziamo e poi vediamo come va
+
+ce l'ho fatta a passare il singleton al progetto API. era piu semplice di quel che pensavo. bastava aggiungerlo alle dipendenze del program.cs (IServiceCollection) come singleton e poi chiamarlo dove mi serve dai _services.

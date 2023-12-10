@@ -15,12 +15,11 @@ namespace OPG_API
         public static IServiceCollection AddDefaultDependencies(this IServiceCollection services)
         {
             //services.AddSingleton<DataAccess>();
-            services.AddSingleton<Game>();
 
             //services.AddSingleton<IManageablePlant, PlantManager>();
-            
+
             //services.AddSingleton<IItemFactory, ItemFactory>();
-            
+
             //services.AddSingleton<IPathFinder, SingleAgentPathFinder>();
 
             //services.AddSingleton<IFactory<ILoadingUnitMissionBuilder>, LoadingUnitMissionBuilderFactory>();
@@ -28,7 +27,11 @@ namespace OPG_API
             //services.AddSingleton<IPlantState, PlantState>();
 
             //services.AddSingleton<MissionManager>();
+
+            services.AddSingleton<Game>();
             
+
+
             services.AddUnitOfWork();
 
             return services;

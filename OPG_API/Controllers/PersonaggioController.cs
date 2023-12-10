@@ -41,12 +41,12 @@ namespace OPG_API.Controllers
         //}
 
 
-        [HttpGet("Getpersonaggio")]
-        public async Task<Core.Primitives.Personaggio?> Getpersonaggio()
-        {
-            await using var uow = _services.GetUnitOfWork();
-            var pg = await uow.PersonaggioRepository.GetByIdAsync(1);
-            return pg;
-        }
+        //[HttpGet("Getpersonaggio")]
+        //public async Task<Core.Primitives.Personaggio?> Getpersonaggio()
+        //{
+        //    await using var uow = _services.GetUnitOfWork();
+        //    var pg = await uow.PersonaggioRepository.GetByIdAsync(1);
+        //    return pg;
+        //}
     }
 }

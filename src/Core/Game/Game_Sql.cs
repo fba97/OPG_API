@@ -27,7 +27,7 @@ namespace Core.Game
                                         WHERE Id = @idmappa", conn);
 
             cmd.Parameters.AddWithValue("@idmappa", id_mappa);
-
+            conn.Open();
             using var r = cmd.ExecuteReader();
             while (r.Read())
             {
@@ -153,7 +153,7 @@ namespace Core.Game
                 int difesa = r.GetInt32("difesa");
                 string descrizione = r.IsDBNull("Descrizione") ? string.Empty : r.GetString("Descrizione");
                 int tipo_personaggio = r.GetInt32("Tipo_Personaggio");
-                int id_posizione = r.GetInt32("Id_Posizione");
+                int id_posizione = r.IsDBNull("Descrizione") ? 0 : r.GetInt32("Id_Posizione");
 
 
                 yield return new Personaggio(id,nome,punti_vita,attacco,difesa,descrizione,tipo_personaggio,id_posizione, taglia:0, livello:0);
@@ -191,6 +191,132 @@ namespace Core.Game
                 yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, bonus_attacco, bonus_difesa, id_posizione, id_inventario);
             }
         }
+        private ActualPartita? GetActualPartita(int id)
+        {
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(@" SELECT TOP 1 
+                                                    [Id_Partita]
+                                                    ,[Id_giocatore]
+                                                    ,[Stato]
+                                                    ,[Nome]
+                                                    ,[Data_Creazione]
+                                                    ,[Data_ultimo_Salvataggio]
+                                                    ,[Difficolta]
+                                                    ,[Id_Obiettivo]
+                                                    ,[Data_Fine_Partita]
+                                                    ,[Data_Inizio_Partita]
+                                                    ,[SalvataggioJSON]
+                                                    
+                                                    FROM[dbo].[Partite_Salvate]
+                                                    WHERE Id_Partita = @id
+                                                    ORDER BY Data_ultimo_Salvataggio desc", conn);
 
+            cmd.Parameters.AddWithValue("@id", id);
+            conn.Open();
+
+            using var r = cmd.ExecuteReader();
+
+            if (r.Read())
+            {
+                int id_partita = r.GetInt32("Id_Partita");
+                int IdGiocatore = r.GetInt32("Id_giocatore");
+                string nome = r.GetString("Nome");
+                int idObiettivo = r.GetInt32("Id_Obiettivo");
+                int difficolta = r.GetInt32("Difficolta");
+                int statoPartita = r.GetInt32("Stato");
+                var dataInizioPartita  = r.IsDBNull("Data_Inizio_Partita") ? null : (DateTime?)r.GetDateTime("Data_Inizio_Partita");
+                var data_ultimo_Salvataggio = r.IsDBNull("Data_ultimo_Salvataggio") ? null : (DateTime?)r.GetDateTime("Data_ultimo_Salvataggio");
+                var dataFinePartita = r.IsDBNull("Data_Fine_Partita") ? null : (DateTime?)r.GetDateTime("Data_Fine_Partita");
+                var json = r.IsDBNull("SalvataggioJSON") ? string.Empty : (string)r.GetString("SalvataggioJSON");
+
+
+                return new ActualPartita(id_partita, nome, IdGiocatore, idObiettivo, difficolta, statoPartita, dataInizioPartita, data_ultimo_Salvataggio, dataFinePartita, json);
+            }
+            return null;
+        }
+
+
+        private int SalvaPartitaToDB(ActualPartita actualPartita)
+        {
+            // NEL CASO IN CUI CI SIA UNA PARTITA CHE HA ID PARTITA 0 SIGNIFICA CHE è NUOVA E VA AGGIUNTO UN NUOVO ID PARTITA. L'ID PARTITA LO TROVO CON UNA GET CHE ORDINA PER ID DESCRESCENTE E PRENDE SOLO LA TOP 1 ID
+            int idPartita;
+            if (actualPartita.Id == 0)
+                idPartita = NewPartitaId();//ancora da usare non ho finito
+
+            using var conn = new SqlConnection(_connString);
+
+            using var cmd = new SqlCommand(@"INSERT INTO [dbo].[Partite_Salvate]
+                                              ([Id_Partita]
+                                              ,[Id_giocatore]
+                                              ,[Stato]
+                                              ,[Nome]
+                                              ,[Data_Creazione]
+                                              ,[Data_ultimo_Salvataggio]
+                                              ,[Difficolta]
+                                              ,[Id_Obiettivo]
+                                              ,[Data_Fine_Partita]
+                                              ,[Data_Inizio_Partita]
+                                              ,[SalvataggioJSON])
+                                        VALUES
+                                              (@Id
+                                              ,@IdGiocatore
+                                              ,@StatoPartita
+                                              ,@Nome
+                                              ,@DataInizioPartita
+                                              ,@DataUltimoSalvataggio
+                                              ,@Difficolta
+                                              ,@IdObiettivo
+                                              ,@DataFinePartita
+                                              ,@DataInizioPartita
+                                              ,@JSONSalvataggio);
+                                              SET @IdSalvataggio = SCOPE_IDENTITY();", conn);
+
+            cmd.Parameters.AddWithValue("@Id",actualPartita.Id);
+            cmd.Parameters.AddWithValue("@IdGiocatore", actualPartita.IdGiocatore);
+            cmd.Parameters.AddWithValue("@StatoPartita", actualPartita.StatoPartita);
+            cmd.Parameters.AddWithValue("@Nome", actualPartita.Nome);
+            cmd.Parameters.AddWithValue("@DataInizioPartita", ((object?)actualPartita.DataInizioPartita) ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@DataUltimoSalvataggio", DateTime.Now);
+            cmd.Parameters.AddWithValue("@Difficolta", actualPartita.Difficolta);
+            cmd.Parameters.AddWithValue("@IdObiettivo", actualPartita.IdObiettivo);
+            cmd.Parameters.AddWithValue("@DataFinePartita", ((object?)actualPartita.DataFinePartita) ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@JSONSalvataggio", ((object?)actualPartita.JSONSalvataggio) ?? DBNull.Value);
+
+            cmd.Parameters.Add
+            (
+                new SqlParameter
+                {
+                    ParameterName = "@IdSalvataggio",
+                    Direction = System.Data.ParameterDirection.Output,
+                    SqlDbType = System.Data.SqlDbType.Int
+                }
+            );
+
+            conn.Open();
+
+            cmd.ExecuteNonQuery();
+
+            var idSalvataggio = cmd.Parameters["@IdSalvataggio"].Value;
+
+            int idSalvataggioint = Convert.ToInt32(idSalvataggio);
+
+            return idSalvataggioint;
+        }
+
+        private int NewPartitaId()
+        {
+            string query = @"SELECT TOP 1 Id_Partita
+                            FROM dbo.[Partite_Salvate]
+                            ORDER BY Id_Partita Desc";
+
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(query, conn);
+
+            using var r = cmd.ExecuteReader();
+
+            if (r.Read())
+                return r.GetInt32("Id_Partita")+1;
+            return 1;
+        }
     }
 }

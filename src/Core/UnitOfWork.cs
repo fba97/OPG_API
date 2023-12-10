@@ -47,9 +47,8 @@ namespace Core.Base
         public UnitOfWork(IConfiguration configuration)
         {
             _connString = configuration.GetConnectionString("sqlStringConnection");
-
-            PersonaggioRepository = new PersonaggioRepository(this);
-            PartitaRepository = new PartitaRepository(this);
+            //PersonaggioRepository = new PersonaggioRepository(this);
+            //PartitaRepository = new PartitaRepository(this);
 
         }
 
@@ -57,13 +56,14 @@ namespace Core.Base
         {
             _connString = connString;
 
-            PersonaggioRepository = new PersonaggioRepository(this);
 
-            PartitaRepository = new PartitaRepository(this);
+            //PersonaggioRepository = new PersonaggioRepository(this);
+
+            //PartitaRepository = new PartitaRepository(this);
         }
 
-        public IPersonaggioRepository PersonaggioRepository { get; }
-        public IPartitaRepository PartitaRepository { get; }    
+        //public IPersonaggioRepository PersonaggioRepository { get; }
+        //public IPartitaRepository PartitaRepository { get; }    
 
         public SqlCommand GetCommand()
         {

@@ -25,8 +25,8 @@ namespace Core.Base
 
         Task<SqlCommand> GetCommandAsync(CancellationToken token = default);
 
-        IPersonaggioRepository PersonaggioRepository { get; }
-        IPartitaRepository PartitaRepository { get; }
+        //IPersonaggioRepository PersonaggioRepository { get; }
+        //IPartitaRepository PartitaRepository { get; }
 
     }
 }

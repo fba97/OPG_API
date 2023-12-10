@@ -6,79 +6,159 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Text.Json;
 using System.Reflection.Metadata.Ecma335;
 using Primitives;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace Core.Game
 {
     public partial class Game
     {
-
-        private readonly IServiceProvider _services;
         private readonly IConfiguration _cfg;
         private readonly string _connString;
+
         private readonly ILogger<Game> _log;
 
-        public InfoPartita? Partita { get => _partita; }
-        private InfoPartita? _partita;
-        public Mappa? Mappa { get => _mappa; }
+        public ActualPartita? PartitaAttuale { get => _partita; }
+        private ActualPartita? _partita;
+
+        public Mappa? AllMappe { get => _mappa; }
         private Mappa? _mappa;
 
-        public IEnumerable<Area> Aree { get => _aree; }
+        public IEnumerable<Area> AllAree { get => _aree; }
         private Area[] _aree;
 
-        public IEnumerable<Tessera> Tessere { get => _tessere; }
+        public IEnumerable<Tessera> AllTessere { get => _tessere; }
         private Tessera[] _tessere;
 
-        public IEnumerable<Punto> Punti { get => _punti; }
+        public IEnumerable<Punto> AllPunti { get => _punti; }
         private Punto[] _punti;
 
-        public IEnumerable<Personaggio> Personaggi { get => _personaggi; }
+        public IEnumerable<Personaggio> AllPersonaggi { get => _personaggi; }
         private Personaggio[] _personaggi;
 
-        public IEnumerable<Oggetto> _Oggetti { get => _oggetti; }
+        public IEnumerable<Oggetto> AllOggetti { get => _oggetti; }
         private Oggetto[] _oggetti;
 
-        public IEnumerable<Passo> Passi { get => _passi; }
+        public IEnumerable<Passo> AllPassi { get => _passi; }
         private Passo[] _passi;
 
-        // il processo di tirare su le partite potrebbe essere quresto:
-        // quando viene avviato il programma non carico nulla.
-        // quando il frontend mi da il comando LoadPartita(id) prendo le info relative ad una partita
-        // se invece il comando è quello di una nuova partita 
 
         public Game
     (
         IConfiguration configuration,
-        ILogger<Game> logger,
-        IServiceProvider services
+        ILogger<Game> logger
     )
         {
             _cfg = configuration;
             _log = logger;
-            _services = services;
             _connString = _cfg.GetConnectionString("sqlStringConnection");
         }
 
-        public async Task NewGameAsync(CancellationToken token = default)
+
+        public bool NewGame(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore)
         {
             try
             {
+                _log.LogInformation($"Inizio Bootstraping NewGame");
                 CleanGameFromMemoryAsync();
-                InitMap();
-                InitPersonaggi();
+                InitGeneralMapInfo();
+                InitGeneralInfo();
 
-                _partita = GetActualPartita();
-                _log.LogInformation($"fine Bootstraping");
+                // in futuro quando avrò piu di una mappa dovrò dare la possibilità di scegliere tramite id_mappa
+                InitNewActualInfo(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore);
+
+
+                _log.LogInformation($"fine Bootstraping NewGame");
             }
             catch (Exception ex)
             {
                 _log.LogCritical(ex.ToString());
                 throw;
+            }
+            return true;
+        }
+        public bool LoadGame(int idPartita)
+        {
+            try
+            {
+                _log.LogInformation($"Inizio Bootstraping LoadGame");
+                CleanGameFromMemoryAsync();
+
+                InitGeneralMapInfo();
+                InitGeneralInfo();
+
+
+                InitActualInfo(idPartita);
+
+
+                _log.LogInformation($"fine Bootstraping LoadGame");
+            }
+            catch (Exception ex)
+            {
+                _log.LogCritical(ex.ToString());
+                throw;
+            }
+            return true;
+        }
+
+        private void InitNewActualInfo(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore)
+        {
+            if (_partita is null)
+                _partita = new ActualPartita
+                    (0,
+                    nome,
+                    idGiocatore,
+                    idObiettivo,
+                    difficoltà,
+                    1,
+                    DateTime.Now,
+                    null,
+                    null,
+                    string.Empty,
+                    AllMappe,
+                    AllAree,
+                    AllTessere,
+                    AllPunti,
+                    AllPersonaggi,
+                    AllOggetti,
+                    AllPassi,
+                    new List<Inventario>(),
+                    new List<Combattimento>(),
+                    new List<Missione>());
+
+        }
+        private void InitActualInfo(int idPartita)
+        {
+            _partita = GetActualPartita(idPartita);
+            if (_partita is not null && !string.IsNullOrEmpty(_partita.JSONSalvataggio))
+            {
+                // dentro jsonSalvataggio devono esserci dentro i persaonaggi, gli oggetti, la mappa, aree, tessere, punti, passi, combattimenti, missioni, inventari., stato generale della partita.
+                var partitaJson = ActualPartita.Deserialize(_partita.JSONSalvataggio);
+
+                _partita.Nome = partitaJson.Nome;
+                _partita.IdGiocatore = partitaJson.IdGiocatore;
+                _partita.IdObiettivo = partitaJson.IdObiettivo;
+                _partita.Difficolta = partitaJson.Difficolta;
+                _partita.StatoPartita = partitaJson.StatoPartita;
+                _partita.DataInizioPartita = partitaJson.DataInizioPartita;
+                _partita.DataUltimoSalvataggio = partitaJson.DataUltimoSalvataggio;
+                _partita.DataFinePartita = partitaJson.DataFinePartita;
+                _partita.JSONSalvataggio = partitaJson.JSONSalvataggio;
+                _partita.Mappa = partitaJson.Mappa;
+                _partita.Aree = partitaJson.Aree;
+                _partita.Tessere = partitaJson.Tessere; 
+                _partita.Punti = partitaJson.Punti; 
+                _partita.Personaggi = partitaJson.Personaggi;   
+                _partita.Oggetti = partitaJson.Oggetti;
+                _partita.Passi = partitaJson.Passi;
+                _partita.Inventari = partitaJson.Inventari;
+                _partita.Combattimenti = partitaJson.Combattimenti;
+                _partita.Missioni = partitaJson.Missioni;
             }
         }
 
@@ -96,21 +176,19 @@ namespace Core.Game
 
 
 
-        private void InitPersonaggi()
+        private void InitGeneralInfo()
         {
-            _log.LogInformation($"Inizio Caricamento personaggi e oggetti");
+            _log.LogInformation($"Inizio Caricamento di tutti i personaggi e gli oggetti");
 
             _oggetti = GetAllOggetti().ToArray();
             _personaggi = GetAllPersonaggi().ToArray();
 
-            //aggiungi ai personaggi stati e inventari
-            //seleziona quali sono i personaggi realmente in gioco (li hai presi tutti per il momento)
-            _log.LogInformation($"fine Caricamento personaggi e oggetti");
+            _log.LogInformation($"fine Caricamento di tutti i personaggi e gli oggetti");
         }
-        private void InitMap()
+        private void InitGeneralMapInfo()
         {
             _log.LogInformation($"Initiating Game Map bootstrapping process");
-            
+
             _punti = GetAllPunti().ToArray();
             _tessere = GetAllTessere().ToArray();
             _aree = GetAllAree().ToArray();
@@ -120,5 +198,17 @@ namespace Core.Game
             _log.LogInformation("Successful Game Map Bootstrap");
 
         }
+
+        public string SalvaPartita()
+        {
+            if (_partita is null)
+                return "Nessuna partita da salvare";
+
+            _partita.JSONSalvataggio = _partita.Serialize();
+            var id_salvataggio = SalvaPartitaToDB(_partita);
+            _log.LogInformation($"È stata salvata la partita con id {id_salvataggio}");
+            return $"È stata salvata la partita con id {id_salvataggio}";
+        }
+
     }
 }
