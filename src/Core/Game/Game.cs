@@ -205,9 +205,11 @@ namespace Core.Game
                 return "Nessuna partita da salvare";
 
             _partita.JSONSalvataggio = _partita.Serialize();
-            var id_salvataggio = SalvaPartitaToDB(_partita);
-            _log.LogInformation($"È stata salvata la partita con id {id_salvataggio}");
-            return $"È stata salvata la partita con id {id_salvataggio}";
+            var id_Partita = SalvaPartitaToDB(_partita);
+            _partita.Id = id_Partita;
+            _partita.JSONSalvataggio = _partita.Serialize();
+            _log.LogInformation($"È stata salvata la partita con id partita {id_Partita}");
+            return $"È stata salvata la partita con id {id_Partita}";
         }
 
     }

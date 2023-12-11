@@ -239,9 +239,12 @@ namespace Core.Game
         private int SalvaPartitaToDB(ActualPartita actualPartita)
         {
             // NEL CASO IN CUI CI SIA UNA PARTITA CHE HA ID PARTITA 0 SIGNIFICA CHE è NUOVA E VA AGGIUNTO UN NUOVO ID PARTITA. L'ID PARTITA LO TROVO CON UNA GET CHE ORDINA PER ID DESCRESCENTE E PRENDE SOLO LA TOP 1 ID
-            int idPartita;
+            
             if (actualPartita.Id == 0)
-                idPartita = NewPartitaId();//ancora da usare non ho finito
+            {
+                actualPartita.Id = NewPartitaId();
+                actualPartita.JSONSalvataggio = actualPartita.Serialize();
+            }
 
             using var conn = new SqlConnection(_connString);
 
@@ -268,8 +271,7 @@ namespace Core.Game
                                               ,@IdObiettivo
                                               ,@DataFinePartita
                                               ,@DataInizioPartita
-                                              ,@JSONSalvataggio);
-                                              SET @IdSalvataggio = SCOPE_IDENTITY();", conn);
+                                              ,@JSONSalvataggio);", conn);
 
             cmd.Parameters.AddWithValue("@Id",actualPartita.Id);
             cmd.Parameters.AddWithValue("@IdGiocatore", actualPartita.IdGiocatore);
@@ -282,25 +284,10 @@ namespace Core.Game
             cmd.Parameters.AddWithValue("@DataFinePartita", ((object?)actualPartita.DataFinePartita) ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@JSONSalvataggio", ((object?)actualPartita.JSONSalvataggio) ?? DBNull.Value);
 
-            cmd.Parameters.Add
-            (
-                new SqlParameter
-                {
-                    ParameterName = "@IdSalvataggio",
-                    Direction = System.Data.ParameterDirection.Output,
-                    SqlDbType = System.Data.SqlDbType.Int
-                }
-            );
-
             conn.Open();
-
             cmd.ExecuteNonQuery();
 
-            var idSalvataggio = cmd.Parameters["@IdSalvataggio"].Value;
-
-            int idSalvataggioint = Convert.ToInt32(idSalvataggio);
-
-            return idSalvataggioint;
+            return actualPartita.Id;
         }
 
         private int NewPartitaId()
@@ -311,6 +298,8 @@ namespace Core.Game
 
             using var conn = new SqlConnection(_connString);
             using var cmd = new SqlCommand(query, conn);
+
+            conn.Open();
 
             using var r = cmd.ExecuteReader();
 
