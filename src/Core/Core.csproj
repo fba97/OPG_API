@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Map Handling\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Primitives\Primitives.csproj" />
   </ItemGroup>
 

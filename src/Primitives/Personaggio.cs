@@ -14,7 +14,12 @@
             Attacco = attacco;
             Difesa = difesa;
             Descrizione = descrizione;
-            TipoPersonaggio = tipoPersonaggio;
+
+            if (Enum.IsDefined(typeof(TipoPersonaggio), tipoPersonaggio))
+                TipoPersonaggio = (TipoPersonaggio)tipoPersonaggio;
+            else
+                throw new ArgumentException($"Il valore {tipoPersonaggio} non è valido per l'enumerazione TipoPersonaggio.");
+            
             Posizione = posizione;
             Stato = stato;
             Taglia = taglia;
@@ -27,7 +32,7 @@
         public int Attacco { get; set; }
         public int Difesa { get; set; }
         public string Descrizione { get; set; } = string.Empty;
-        public int TipoPersonaggio { get; set; }
+        public TipoPersonaggio TipoPersonaggio { get; set; }
         public int Posizione { get; set; }
         public int Taglia { get; set; }
         public int Livello { get; set; }

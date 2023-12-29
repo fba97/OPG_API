@@ -44,8 +44,9 @@ namespace Core.Game
         public IEnumerable<Oggetto> AllOggetti { get => _oggetti; }
         private Oggetto[] _oggetti;
 
-        public IEnumerable<Passo> AllPassi { get => _passi; }
-        private Passo[] _passi;
+        public IEnumerable<Adiacenza> AllAdiacenze { get => _adiacenze; }
+        private Adiacenza[] _adiacenze;
+
 
 
         public Game
@@ -126,7 +127,7 @@ namespace Core.Game
                     AllPunti,
                     AllPersonaggi,
                     AllOggetti,
-                    AllPassi,
+                    AllAdiacenze,
                     new List<Inventario>(),
                     new List<Combattimento>(),
                     new List<Missione>());
@@ -151,11 +152,11 @@ namespace Core.Game
                 _partita.JSONSalvataggio = partitaJson.JSONSalvataggio;
                 _partita.Mappa = partitaJson.Mappa;
                 _partita.Aree = partitaJson.Aree;
-                _partita.Tessere = partitaJson.Tessere; 
-                _partita.Punti = partitaJson.Punti; 
-                _partita.Personaggi = partitaJson.Personaggi;   
+                _partita.Tessere = partitaJson.Tessere;
+                _partita.Punti = partitaJson.Punti;
+                _partita.Personaggi = partitaJson.Personaggi;
                 _partita.Oggetti = partitaJson.Oggetti;
-                _partita.Passi = partitaJson.Passi;
+                _partita.Adiacenze = partitaJson.Adiacenze;
                 _partita.Inventari = partitaJson.Inventari;
                 _partita.Combattimenti = partitaJson.Combattimenti;
                 _partita.Missioni = partitaJson.Missioni;
@@ -171,7 +172,7 @@ namespace Core.Game
             this._punti = new List<Punto>().ToArray();
             this._personaggi = new List<Personaggio>().ToArray();
             this._oggetti = new List<Oggetto>().ToArray();
-            this._passi = new List<Passo>().ToArray();
+            this._adiacenze = new List<Adiacenza>().ToArray();
         }
 
 
@@ -193,7 +194,7 @@ namespace Core.Game
             _tessere = GetAllTessere().ToArray();
             _aree = GetAllAree().ToArray();
             _mappa = GetMappa(1);
-            //_passi = GetPassi().ToArray();
+            _adiacenze = GetAllAdiacenze().ToArray();
 
             _log.LogInformation("Successful Game Map Bootstrap");
 
@@ -212,5 +213,24 @@ namespace Core.Game
             return $"È stata salvata la partita con id {id_Partita}";
         }
 
+
+        public List<Personaggio> GetPersonaggiLocatedIn(Tessera tessera)
+        {
+            List<Punto> puntiDaControllare = (List<Punto>)tessera.Punti;
+
+            var personaggiIncriminati = PartitaAttuale.Personaggi
+                .Where(personaggio => puntiDaControllare.Any(punto => punto.Id == personaggio.Posizione))
+                .ToList();
+
+            return personaggiIncriminati;
+        }
+
+        public Punto GetPuntoById(int idPunto)
+        => AllPunti.Where(p => p.Id == idPunto).First();
+
+
+
     }
+
 }
+

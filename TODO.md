@@ -50,14 +50,11 @@ quando si deve salvare la partita la si salva come json nella tabella salvataggi
 azioni che devono fare i personaggi: movimenti, combattimenti, usare oggetti, raccogliere oggetti, scambiare oggetti
 
 
-
 1.1 - ok - modifica le tabelle a db -> togli tutte quelle in partita, aggiunti i punti con la loro id, tessere, mappe, aree
 1.2 - ok - modifica le primitives
 1.3 - ok - modifica l'accesso ai dati per riempire gli oggetti
-1.4 - modifica l'init della partita nella classe _game
-1.5 - 
-
-2.0 - crea il salva e il load della partita tramite serializzazione json
+1.4 - ok - modifica l'init della partita nella classe _game
+2.0 - ok - crea il salva e il load della partita tramite serializzazione json
 
 
 
@@ -66,7 +63,7 @@ e mi sono chiesto a che cazzo servano le repo se tiro su tutto tramite game.sql
 quindi sarebbe possibile toglierle. 
 Per il momento le tengo lasciando il codice sporco perchè potrei doverle utilizzare.
 
-Infatti ho chiesto a nico e mi dice che il modogiusto sono le repository e non game.sql
+Infatti ho chiesto a nico e mi dice che il modo giusto sono le repository e non game.sql, ovvero un accesso diretto non thread safe.
 
 ma io me ne fotto e lo tiro su cosi al massimo farò un refactor.
 
@@ -75,7 +72,57 @@ mi sono accorto che in game stavo facendo query per prendere tutti i personaggi 
 ho deciso che in game ho ALLpersonaggi, ALLOggetti, ALL mappe.. cosi se serve le faccio vedere al frontend oppure prendere oggetti a caso tra tutti gli oggetti..
 e in game.PartitaAttuale ho dentro la partita che carico o nuova. 
 e come faccio a prendere i personaggi nella partita? 
---> tiro su il json che ha solo gli id dei personaggi e oggetti. e poi l'oggetto personaggio/oggetto lo prendo da game che li ha gia tutti.
-Anche se alcune proprietà vanno valorizzate come l'attacco gli oggetti assegnati. quindi per il momento serializziamo e poi vediamo come va
+-->tiro su il json con dentro personaggi e tutte le loro proprietà nel momento in cui si è salvata la partita.
 
 ce l'ho fatta a passare il singleton al progetto API. era piu semplice di quel che pensavo. bastava aggiungerlo alle dipendenze del program.cs (IServiceCollection) come singleton e poi chiamarlo dove mi serve dai _services.
+
+
+
+
+trasforma in enum tipo personaggio
+hanno effettivamente differenze di inizializzazione o nelle proprietà?
+l'unics differenza è che devono essere gestiti dal programma e non da un giocatore.
+
+una tipologia di personaggio diverso potrebbe essere le pattuglie. hanno piu singoli per ogni gruppo. perdono vita in maniera differente in base a chi attacchi.
+potrebbe essere che quindi hanno una lista con dentro tutti i personaggi.
+
+
+
+## creazione delle missioni:
+nuove tabelle: missioni, adiacenze, passi  
+
+mission manager - crea missione
+                - cancella missione
+                - completa passo
+                - set step status
+                - 
+                - come proprietà ha senso abbia dentro al mission manager le missioni, visto che sono istantanee? NO!
+                  non ci sono missioni che durano piu turni. le pattuglie ogni volta creo la missione di n passi.
+                
+per evitare il multi-threading che potrebbe aggiungere un livello di complessità al programma e costringermi ad aggiungere lock e non per accedere agli oggetti o al db
+sarebbe utile cominciare a pensare ad un loop che gestisce le turnazioni delle fasi del gioco con un solo thread che gira.
+
+
+le fasi potrebbero essere: 
+Turno Pirati
+        turno giocatore 1
+        ..
+        turno giocatore N
+Turno Mappa
+        turno npc 1
+        ..
+        turno npc N
+
+
+        il turno di ogni personaggio:
+        hai la possibilità di fare due azioni.
+        
+        
+        le azioni sono di varie tipologie:
+        Spostamento
+        Combattimento
+        raccolta oggetti, probabilità, imprevisti
+        scambio oggetti
+        vendita oggetti
+
+        

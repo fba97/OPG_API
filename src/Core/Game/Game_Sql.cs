@@ -307,5 +307,30 @@ namespace Core.Game
                 return r.GetInt32("Id_Partita")+1;
             return 1;
         }
+
+        private IEnumerable<Adiacenza> GetAllAdiacenze()
+        {
+            using var conn = new SqlConnection(_connString);
+            using var cmd = new SqlCommand(@"SELECT [Id]
+                                                    ,[IdPuntoUno]
+                                                    ,[IdPuntoDue]
+                                                    ,[Bidirezionale]
+                                                    ,[Abilitata]
+                                            FROM[OPG_DB].[dbo].[Adiacenze]", conn);
+            conn.Open();
+
+            using var r = cmd.ExecuteReader();
+
+            while (r.Read())
+            {
+                int Id = r.GetInt32("Id");
+                int idPuntoUno = r.GetInt32("IdPuntoUno");
+                int idPuntoDue = r.GetInt32("IdPuntoUno");
+                bool Bidirezionale = r.GetBoolean("Bidirezionale");
+                bool Abilitata = r.GetBoolean("Abilitata");
+
+                yield return new Adiacenza(Id, idPuntoUno, idPuntoDue, Bidirezionale,Abilitata);
+            }
+        }
     }
 }

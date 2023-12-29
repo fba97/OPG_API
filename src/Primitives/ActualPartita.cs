@@ -29,7 +29,7 @@ namespace Primitives
 
         }
 
-        public ActualPartita(int id, string nome, int idGiocatore, int idObiettivo, int difficolta, int statoPartita, DateTime? dataInizioPartita, DateTime? dataUltimoSalvataggio, DateTime? dataFinePartita, string jSONSalvataggio, Mappa? mappa, IEnumerable<Area> aree, IEnumerable<Tessera> tessere, IEnumerable<Punto> punti, IEnumerable<Personaggio> personaggi, IEnumerable<Oggetto> oggetti, IEnumerable<Passo> passi, IEnumerable<Inventario> inventari, IEnumerable<Combattimento> combattimenti, IEnumerable<Missione> missioni) : this(id, nome, idGiocatore, idObiettivo, difficolta, statoPartita, dataInizioPartita, dataUltimoSalvataggio, dataFinePartita, jSONSalvataggio)
+        public ActualPartita(int id, string nome, int idGiocatore, int idObiettivo, int difficolta, int statoPartita, DateTime? dataInizioPartita, DateTime? dataUltimoSalvataggio, DateTime? dataFinePartita, string jSONSalvataggio, Mappa? mappa, IEnumerable<Area> aree, IEnumerable<Tessera> tessere, IEnumerable<Punto> punti, IEnumerable<Personaggio> personaggi, IEnumerable<Oggetto> oggetti, IEnumerable<Adiacenza> adiacenze, IEnumerable<Inventario> inventari, IEnumerable<Combattimento> combattimenti, IEnumerable<Missione> missioni) : this(id, nome, idGiocatore, idObiettivo, difficolta, statoPartita, dataInizioPartita, dataUltimoSalvataggio, dataFinePartita, jSONSalvataggio)
         {
             Mappa = mappa;
             Aree = aree;
@@ -37,7 +37,7 @@ namespace Primitives
             Punti = punti;
             Personaggi = personaggi;
             Oggetti = oggetti;
-            Passi = passi;
+            Adiacenze = adiacenze;
             Inventari = inventari;
             Combattimenti = combattimenti;
             Missioni = missioni;
@@ -50,7 +50,7 @@ namespace Primitives
 
         public static ActualPartita Deserialize(string json)
         {
-            return JsonSerializer.Deserialize<ActualPartita>(json) ?? new ActualPartita(); ;
+            return JsonSerializer.Deserialize<ActualPartita>(json) ?? new ActualPartita();
         }
 
         public int Id { get; set; } = 0;
@@ -71,7 +71,7 @@ namespace Primitives
         public IEnumerable<Punto> Punti { get; set; } = new List<Punto>();
         public IEnumerable<Personaggio> Personaggi { get; set; } = new List<Personaggio>();
         public IEnumerable<Oggetto> Oggetti { get; set; } = new List<Oggetto>();
-        public IEnumerable<Passo> Passi { get; set; } = new List<Passo>();
+        public IEnumerable<Adiacenza> Adiacenze { get; set; } = new List<Adiacenza>();
 
         public IEnumerable<Inventario> Inventari { get; set; } = new List<Inventario>();
         public IEnumerable<Combattimento> Combattimenti { get; set; } = new List<Combattimento>();

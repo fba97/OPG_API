@@ -9,9 +9,10 @@ namespace Primitives
     public class Missione
     {
         public int Id { get; set; }
-        public int TipoMissione { get; set; }
+        public TipoMissione TipoMissione { get; set; }
         public int Partenza { get; set; }
         public int Destinazione { get; set; }
-        public IEnumerable<Passo> Passi { get; set; }    
+        public StatoMissione Stato { get; set; }
+        public IEnumerable<Passo> Passi { get; set; } = new List<Passo>();
     }
 }
