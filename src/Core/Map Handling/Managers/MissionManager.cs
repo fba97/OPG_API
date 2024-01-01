@@ -12,14 +12,15 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Core;
-using Core.Game;
+using Core.Game_dir;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Map_Handling.Managers
 {
     public class MissionManager
     {
         private readonly string _connString;
-        private readonly Game.Game _game;
+        private Game _game;
         private readonly List<Missione> _missions;
 
         private readonly ILogger<MissionManager> _log;
@@ -31,7 +32,7 @@ namespace Core.Map_Handling.Managers
                 ILogger<MissionManager> logger,
                IConfiguration configuration,
                IServiceProvider serviceProvider,
-               Core.Game.Game game               
+               Game game               
            )
         {
             _log = logger;
@@ -41,9 +42,10 @@ namespace Core.Map_Handling.Managers
         }
         private record DirezioneAdiacenza(int IdPuntoUno, int IdPuntoDue);
 
-
+        //TESTA CHE DATI DUE PUNTI RESTITUISCA LA MISSIONE COI PASSI CORRETTI. (AGGIUNGI LE ADIACENZE BIDIREZIONALI PRIMA)
         public Missione? CreateMission(int idActualPunto, int idDestinationPunto, int idPersonaggio, int numeroPassi)
         {
+            
             //controllo se effettivamente puo muoversi o cosa ( controllo se nella casella ci sono o no nemici. se si riturno null)
             // per fare questa cosa devo prima capire in che esagono mi trovo. una volta che ho capito in che esagono sono devo andare a vedere quali altri punti sono nello stesso esagono
             //il top sarebbe avere un metodo che mi permetta di avere una lista di punti appartenenti a quell'esagono (perchè sicuro mi servirà ancora)
@@ -174,13 +176,21 @@ namespace Core.Map_Handling.Managers
             //trovo N adiacenze. se le adiacenze sono relative a punti gia presenti nel path le escludo. se no vado a creare N nuovi path uguali ai quali vado ad aggiungere la nuova adiacenza.
             //Ogni ciclo vado ad aggiungere un'adiacenza ad ogni path.
             //Il primo path che trova l'adiacenza con destinazione uguale all'idDestinazionePunto viene ritornato in quandto piu corto.
-            List<Adiacenza> initialPath = new List<Adiacenza>();
-            List<List<Adiacenza>> paths = new List<List<Adiacenza>>
-            {
-                initialPath
-            };
-
+          
             var idPuntoPerNuovoNodo = idActualPunto;
+
+            List<List<Adiacenza>> paths = new List<List<Adiacenza>>();
+
+            List<Adiacenza> PrimiNodiDaAggiungere = adiacenze.Where(a => (a.IdPuntoUno == idPuntoPerNuovoNodo
+                                                                 || a.IdPuntoDue == idPuntoPerNuovoNodo)
+                                                                    && a.Abilitata == true).ToList();
+            foreach(var a in PrimiNodiDaAggiungere)
+            {
+                paths.Add( new List<Adiacenza> { a } );
+            }
+            
+           
+
 
             foreach (var path in paths) 
             {
@@ -210,15 +220,15 @@ namespace Core.Map_Handling.Managers
 
                 // rimuovo tutte quelle adiacenze che erano gia presenti nel path
                 PossibiliNuoveAdiacenze.RemoveAll(pna => path.Any(a => a.Id == pna.Id));
-                // ora devo rimuovere tutte quele adiacenze che ritornano su un punto gia percorso nel path.
+                // ora devo rimuovere tutte quele adiacenze che ritornano su un punto gia percorso nel path. escludendo l'IdPuntoPerNuovoNodo
                 PossibiliNuoveAdiacenze.RemoveAll(pna =>
                                                     (path.Any(a =>      a.IdPuntoUno == pna.IdPuntoUno 
                                                                     ||  a.IdPuntoDue == pna.IdPuntoUno) 
-                                                                    && idActualPunto != pna.IdPuntoUno) 
+                                                                    && idPuntoPerNuovoNodo != pna.IdPuntoUno) 
                                                                     || 
                                                      (path.Any(a =>     a.IdPuntoUno == pna.IdPuntoDue 
                                                                     ||  a.IdPuntoDue == pna.IdPuntoDue) 
-                                                                    && idActualPunto != pna.IdPuntoDue)
+                                                                    && idPuntoPerNuovoNodo != pna.IdPuntoDue)
                                                      );
 
                 if (PossibiliNuoveAdiacenze.Count > 1)
@@ -226,15 +236,23 @@ namespace Core.Map_Handling.Managers
                     foreach (var adiacenza in PossibiliNuoveAdiacenze)
                     {
                         // qui devo controllare che i path vengano inseriti e calcolati nella successiva iterazione
-                        var newPath = path;
-                        newPath.Add(adiacenza); 
+                        var newPath = new List<Adiacenza>(path);
+
+                        newPath.Add(adiacenza);
                         paths.Add(newPath);
+
                     }
                 //if(PossibiliNuoveAdiacenze.Count == 0)
                     //se non sono arrivato al mio punto niente. cancello questo percorso o non lo calcolo alla fine
                 if(PossibiliNuoveAdiacenze.Count == 1)
-                    //aggiungi l'adiacenza al path attuale
+                //aggiungi l'adiacenza al path attuale
+                {
                     path.Add(PossibiliNuoveAdiacenze[0]);
+
+                    idPuntoPerNuovoNodo = (path.Last().IdPuntoUno == idPuntoPerNuovoNodo)
+                                            ? path.Last().IdPuntoDue
+                                            : path.Last().IdPuntoUno;
+                }
 
                 if(path.Last().IdPuntoUno == idDestinationPunto || path.Last().IdPuntoDue == idDestinationPunto)
                 {

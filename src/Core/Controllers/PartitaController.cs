@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Core.Base;
-using Core.Game;
+using Core.Game_dir;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Controllers

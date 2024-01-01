@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Core.Game
+namespace Core.Game_dir
 {
     public partial class Game
     {
@@ -58,11 +58,11 @@ namespace Core.Game
             using var r = cmd.ExecuteReader();
             while (r.Read())
             {
-                int id = r.GetInt32(0);
-                int id_area = r.GetInt32(1);
-                string descrizione = r.GetString(2);
-                string comportamento = r.GetString(3);
-                string configurazione = r.GetString(4);
+                int id = r.GetInt32("Id");
+                int id_area = r.GetInt32("Id_Area");
+                string descrizione = r.IsDBNull("Descrizione") ? string.Empty : r.GetString("Descrizione");
+                string tipo = r.GetString("Tipo");
+                string configurazione = r.IsDBNull("Configurazione") ? string.Empty : r.GetString("Configurazione");
 
                 var punti = _punti.Where(i => i.Id_Tessera == id)
                                     .ToArray();
@@ -87,11 +87,11 @@ namespace Core.Game
             using var r = cmd.ExecuteReader();
             while (r.Read())
             {
-                int id = r.GetInt32(0);
-                int id_mappa = r.GetInt32(1);
-                string descrizione = r.GetString(2);
-                string comportamento = r.GetString(3);
-                string configurazione = r.GetString(4);
+                int id = r.GetInt32("Id");
+                int id_mappa = r.GetInt32("Id_Mappa");
+                string descrizione = r.IsDBNull("Descrizione") ? string.Empty : r.GetString("Descrizione");
+                string comportamento = r.IsDBNull("Comportamento") ? string.Empty : r.GetString("Comportamento");
+                string configurazione = r.IsDBNull("Configurazione") ? string.Empty : r.GetString("Configurazione");
 
                 var tessere = _tessere.Where(i => i.Id_Area == id)
                                     .ToArray();
@@ -117,12 +117,12 @@ namespace Core.Game
 
             while (r.Read())
             {
-                int id = r.GetInt32(0);
-                int id_tessera = r.GetInt32(1);
-                string descrizione = r.GetString(2);
-                int tipo = r.GetInt32(3);
-                int capienza = r.GetInt32(4);
-                bool blocco = r.GetBoolean(5);
+                int id = r.GetInt32("Id");
+                int id_tessera = r.GetInt32("Id_Tessera");
+                string descrizione = r.IsDBNull("Descrizione") ? string.Empty : r.GetString("Descrizione");
+                string tipo = r.IsDBNull("Tipo") ? string.Empty : r.GetString("Tipo");
+                int capienza = r.GetInt32("Capienza");
+                bool blocco = r.IsDBNull("Blocco") ? false : r.GetBoolean("Blocco");
 
                 yield return new Punto(id, id_tessera, descrizione, capienza, blocco);
             }
@@ -325,7 +325,7 @@ namespace Core.Game
             {
                 int Id = r.GetInt32("Id");
                 int idPuntoUno = r.GetInt32("IdPuntoUno");
-                int idPuntoDue = r.GetInt32("IdPuntoUno");
+                int idPuntoDue = r.GetInt32("IdPuntoDue");
                 bool Bidirezionale = r.GetBoolean("Bidirezionale");
                 bool Abilitata = r.GetBoolean("Abilitata");
 

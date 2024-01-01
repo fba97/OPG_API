@@ -1,5 +1,6 @@
 ﻿using Core.Base;
-using Core.Game;
+using Core.Game_dir;
+using Core.Map_Handling.Managers;
 using Primitives;
 using System.Numerics;
 
@@ -29,7 +30,7 @@ namespace OPG_API
             //services.AddSingleton<MissionManager>();
 
             services.AddSingleton<Game>();
-            
+            services.AddSingleton<MissionManager>();
 
 
             services.AddUnitOfWork();

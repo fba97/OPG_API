@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace Core.Game
+namespace Core.Game_dir
 {
     public partial class Game
     {
@@ -216,7 +216,7 @@ namespace Core.Game
 
         public List<Personaggio> GetPersonaggiLocatedIn(Tessera tessera)
         {
-            List<Punto> puntiDaControllare = (List<Punto>)tessera.Punti;
+            var puntiDaControllare = tessera.Punti.ToList();
 
             var personaggiIncriminati = PartitaAttuale.Personaggi
                 .Where(personaggio => puntiDaControllare.Any(punto => punto.Id == personaggio.Posizione))
