@@ -21,13 +21,17 @@ namespace OPG_API.Controllers
             _services = services;
         }
 
-        [HttpPost("creazione missione Test")]
-        // pulisci le tabelle della partita attuale e riempile con la partita scelta tramite id
+        [HttpPost("Crea Missione")]
         public async Task<ActionResult> CreazioneMissione (int punto1, int punto2, int numeroPassi)
         {
             var _mm = _services.GetService<MissionManager>();
 
+            if (_mm is null)
+                return BadRequest();
+
             var missione = _mm.CreateMission(punto1,punto2,1,numeroPassi);
+            if (missione is null)
+                return BadRequest();
 
             return Ok();
         }

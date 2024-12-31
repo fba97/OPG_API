@@ -93,7 +93,6 @@ namespace Core.Game_dir
                 InitGeneralMapInfo();
                 InitGeneralInfo();
 
-
                 InitActualInfo(idPartita);
 
 
@@ -218,7 +217,12 @@ namespace Core.Game_dir
         {
             var puntiDaControllare = tessera.Punti.ToList();
 
-            var personaggiIncriminati = PartitaAttuale.Personaggi
+            var personaggiIncriminati = new List<Personaggio>();
+
+            if (PartitaAttuale is null)
+                return personaggiIncriminati;
+
+            personaggiIncriminati = PartitaAttuale.Personaggi
                 .Where(personaggio => puntiDaControllare.Any(punto => punto.Id == personaggio.Posizione))
                 .ToList();
 
