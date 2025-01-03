@@ -11,12 +11,12 @@ namespace OPG_API.Controllers
     [Route("api/[controller]")]
     public class PartitaController : ControllerBase
     {
-        private readonly ILogger<PersonaggioController> _logger;
+        private readonly ILogger<PartitaController> _logger;
         private readonly IServiceProvider _services;
         
         
 
-        public PartitaController(ILogger<PersonaggioController> logger, IServiceProvider services)
+        public PartitaController(ILogger<PartitaController> logger, IServiceProvider services)
         {
             _logger = logger;
             _services = services;
@@ -55,14 +55,5 @@ namespace OPG_API.Controllers
 
             return Ok(messaggio);
         }
-
-        [HttpGet("UpdateGameInformations")]
-        public async Task<ActualPartita?> UpdateGameInformations()
-        {
-            var game = _services.GetService<Game>();
-
-            return game?.PartitaAttuale;
-        }
-
     }
 }
