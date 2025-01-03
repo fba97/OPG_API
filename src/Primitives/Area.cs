@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Primitives
@@ -13,9 +14,9 @@ namespace Primitives
         public int Id_Mappa { get; set; }
         public string Descrizione { get; set; } = string.Empty;
         public IEnumerable<Tessera> Tessere { get; internal set; }
-
+        [JsonIgnore]
         public Mappa LocatedIn { get; internal set; } = null!;
-
+        [JsonIgnore]
         public Mappa Parent => LocatedIn;
         public Area(int id, int id_mappa, string descrizione, IEnumerable<Tessera> tessere)
         {

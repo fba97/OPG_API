@@ -1,4 +1,6 @@
-﻿namespace Primitives
+﻿using System.Text.Json.Serialization;
+
+namespace Primitives
 {
     public class Tessera
     {
@@ -7,9 +9,9 @@
         public string Descrizione { get; set; } = string.Empty;
         public string Tipo { get; } = string.Empty;
         public bool Configurazione { get; set; }
-
+        [JsonIgnore]
         public Area LocatedIn { get; internal set; } = null!;
-
+        [JsonIgnore]
         public Area Parent => LocatedIn;
         public IEnumerable<Punto> Punti { get; internal set; }
 
