@@ -26,7 +26,6 @@ namespace Primitives
             DataUltimoSalvataggio = dataUltimoSalvataggio;
             DataFinePartita = dataFinePartita;
             JSONSalvataggio = json;
-
         }
 
         public ActualPartita(int id, string nome, int idGiocatore, int idObiettivo, int difficolta, int statoPartita, DateTime? dataInizioPartita, DateTime? dataUltimoSalvataggio, DateTime? dataFinePartita, string jSONSalvataggio, Mappa? mappa, IEnumerable<Area> aree, IEnumerable<Tessera> tessere, IEnumerable<Punto> punti, IEnumerable<Personaggio> personaggi, IEnumerable<Oggetto> oggetti, IEnumerable<Adiacenza> adiacenze, IEnumerable<Inventario> inventari, IEnumerable<Combattimento> combattimenti, IEnumerable<Missione> missioni) : this(id, nome, idGiocatore, idObiettivo, difficolta, statoPartita, dataInizioPartita, dataUltimoSalvataggio, dataFinePartita, jSONSalvataggio)

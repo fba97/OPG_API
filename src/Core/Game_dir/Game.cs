@@ -212,8 +212,7 @@ namespace Core.Game_dir
             return $"È stata salvata la partita con id {id_Partita}";
         }
 
-
-        public List<Personaggio> GetPersonaggiLocatedIn(Tessera tessera)
+            public List<Personaggio> GetPersonaggiLocatedIn(Tessera tessera)
         {
             var puntiDaControllare = tessera.Punti.ToList();
 

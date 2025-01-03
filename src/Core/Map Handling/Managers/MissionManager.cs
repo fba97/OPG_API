@@ -21,7 +21,7 @@ namespace Core.Map_Handling.Managers
     {
         private readonly string _connString;
         private Game _game;
-        private readonly List<Missione> _missions;
+        private readonly List<Missione> _missions = new List<Missione>();
         private const int MAX_PATH_LENGTH = 100;
         private const int MAX_PATHS = 1000;
 
@@ -69,6 +69,8 @@ namespace Core.Map_Handling.Managers
                 Passi = passi
             };
 
+            _missions?.Add(missione);
+
             return missione;
         }
 
@@ -113,6 +115,8 @@ namespace Core.Map_Handling.Managers
 
         public Missione ExecuteMission(Missione missione)
         {
+            missione.Stato = StatoMissione.InCorso;
+
             foreach (var passo in missione.Passi)
             {
                 var statoPasso = ExecuteStep(passo);
@@ -124,12 +128,15 @@ namespace Core.Map_Handling.Managers
                 }
             }
 
+            if(!missione.Passi.Any(p => p.Stato != StatoPasso.Completato))
+                missione.Stato = StatoMissione.Completata;
+
             return missione;
         }
 
         public StatoPasso ExecuteStep(Passo passo)
         {
-            if (NemiciNellaTessera(passo.Id))
+            if (NemiciNellaTessera(passo.Destinazione))
                 return StatoPasso.Errore;
 
             return StatoPasso.Completato;

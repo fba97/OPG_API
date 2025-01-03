@@ -21,19 +21,25 @@ namespace OPG_API.Controllers
             _services = services;
         }
 
-        [HttpPost("Crea Missione")]
-        public async Task<ActionResult> CreazioneMissione (int punto1, int punto2, int numeroPassi)
+        [HttpPost("CreateAndExecuteMission")]
+        public async Task<ActionResult> CreateAndExecuteMission(int punto1, int punto2, int idPersonaggio, int numeroPassi)
         {
             var _mm = _services.GetService<MissionManager>();
-
+      
             if (_mm is null)
                 return BadRequest();
 
-            var missione = _mm.CreateMission(punto1,punto2,1,numeroPassi);
+            var missione = _mm.CreateMission(punto1,punto2, idPersonaggio, numeroPassi);
             if (missione is null)
                 return BadRequest();
 
-            return Ok();
+            missione = _mm.ExecuteMission(missione);
+            _mm.DeleteMission(missione.Id);
+
+            if (missione.Stato == StatoMissione.Completata)
+                return Ok();
+
+            return BadRequest($"Esecuzione della missione in stato : {missione.Stato.ToString()}");
         }
 
     }
