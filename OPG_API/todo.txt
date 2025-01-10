@@ -2,8 +2,7 @@ todo
 Accedi a tutte le tabelle Base
 Cancella le tabelle inventario, combattimenti, liste combattimenti, stati visto che sono tabelle che rappresentano lo stato attuale della partita. e quello ce l'ho nella memoria e salvato continualmente nella tabella partite_salvate
 Aggiungi tutti i controller per far vedere gli end point, sistemali devono essere cosi: 
-azioni: movimento, attacco, usa effetto(del pg), scambiaOggetto, raccogli, probabilità, imprevisto, concludiTurno
+azioni: movimento, attacco, usaEffetto(del pg), scambia, raccogli, probabilità, imprevisto, concludiTurno
 partita: salva, carica, elimina
 update: GetUpdateTotale, GetUpdatePartitaAttuale, getBaseInfo 
-
 

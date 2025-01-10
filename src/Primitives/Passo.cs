@@ -22,5 +22,12 @@ namespace Primitives
         public int Destinazione { get; set; }
         public Missione? Missione { get; set; } = null;
         public StatoPasso Stato { get; set; } = StatoPasso.Nuovo;
+
+        public StatoPasso SetStato(StatoPasso stato)
+        {
+            Stato = Stato;
+            return Stato;
+        }
+
     }
 }

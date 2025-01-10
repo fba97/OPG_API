@@ -137,14 +137,25 @@ namespace OPG_API.Controllers
         }
 
         [HttpPost("CreaEseguiMissione")]
-        public async Task<ActionResult> CreaEseguiMissione(int punto1, int punto2, int idPersonaggio, int numeroPassi)
+        public async Task<ActionResult> CreaEseguiMissione(int idPersonaggio, int destinazione, int numeroPassi)
         {
             var _mm = _services.GetService<MissionManager>();
-
             if (_mm is null)
-                return BadRequest();
+                return BadRequest("MissionManager non trovato");
 
-            var missione = _mm.CreateMission(punto1, punto2, idPersonaggio, numeroPassi);
+            var game = _services.GetService<Game>();
+            if (game is null)
+                return BadRequest("Game non trovato");
+
+            var partitaAttuale = game.PartitaAttuale;
+            if (partitaAttuale is null)
+                return BadRequest("Caricare una partita prima di eseguire missioni");
+
+            var personaggio = partitaAttuale.Personaggi.FirstOrDefault(p => p.Id == idPersonaggio);
+            if (personaggio is null)
+                return BadRequest("Personaggio non trovato nella partita");
+
+            var missione = _mm.CreateMission(personaggio, destinazione, numeroPassi);
             if (missione is null)
                 return BadRequest();
 

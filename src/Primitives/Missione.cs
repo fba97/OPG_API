@@ -9,6 +9,7 @@ namespace Primitives
     public class Missione
     {
         public int Id { get; set; }
+        public Personaggio Personaggio { get; set; }
         public TipoMissione TipoMissione { get; set; }
         public int Partenza { get; set; }
         public int Destinazione { get; set; }

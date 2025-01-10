@@ -170,7 +170,6 @@ namespace Core.Game_dir
                                                  ,[bonus_attacco]
                                                  ,[bonus_difesa]
                                                  ,[Id_Posizione]
-                                                 ,[id_inventario]
                                              FROM [dbo].[Oggetti]", conn);
             conn.Open();
 

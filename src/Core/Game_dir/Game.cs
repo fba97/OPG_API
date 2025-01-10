@@ -38,14 +38,16 @@ namespace Core.Game_dir
         public IEnumerable<Punto> AllPunti { get => _punti; }
         private Punto[] _punti;
 
+        public IEnumerable<Adiacenza> AllAdiacenze { get => _adiacenze; }
+        private Adiacenza[] _adiacenze;
+
         public IEnumerable<Personaggio> AllPersonaggi { get => _personaggi; }
         private Personaggio[] _personaggi;
 
         public IEnumerable<Oggetto> AllOggetti { get => _oggetti; }
         private Oggetto[] _oggetti;
 
-        public IEnumerable<Adiacenza> AllAdiacenze { get => _adiacenze; }
-        private Adiacenza[] _adiacenze;
+
 
 
 
@@ -71,7 +73,7 @@ namespace Core.Game_dir
                 InitGeneralInfo();
 
                 // in futuro quando avrò piu di una mappa dovrò dare la possibilità di scegliere tramite id_mappa
-                InitNewActualInfo(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore);
+                InitNewActualInfo(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore, 1);
 
 
                 _log.LogInformation($"fine Bootstraping NewGame");
@@ -106,7 +108,7 @@ namespace Core.Game_dir
             return true;
         }
 
-        private void InitNewActualInfo(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore)
+        private void InitNewActualInfo(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore, int idMappa)
         {
             if (_partita is null)
                 _partita = new ActualPartita
@@ -120,14 +122,14 @@ namespace Core.Game_dir
                     null,
                     null,
                     string.Empty,
-                    AllMappe,
-                    AllAree,
-                    AllTessere,
-                    AllPunti,
-                    AllPersonaggi,
-                    AllOggetti,
-                    AllAdiacenze,
-                    new List<Inventario>(),
+                    AllMappe, // aggiungi il prendere le informazioni tramite id dal database in base all'id mappa.
+                    AllAree, // sempre da db in base alla mappa
+                    AllTessere, // sempre da db in base alla mappa
+                    AllPunti, // sempre da db in base alla mappa
+                    AllPersonaggi, // prendi i giocatori da una lista di interi messa in input
+                    AllOggetti, //qui li sorteggi a caso. ne prendi 10 e li metti a caso con delle posizioni  
+                    AllAdiacenze, // questo devi pensarci. perchè potrebbe essere che alcune adiacenze siano sbloccate oppure bloccate. ad ogni modo lo toglierei.
+                    new List<Inventario>(), 
                     new List<Combattimento>(),
                     new List<Missione>());
 
@@ -156,9 +158,6 @@ namespace Core.Game_dir
                 _partita.Personaggi = partitaJson.Personaggi;
                 _partita.Oggetti = partitaJson.Oggetti;
                 _partita.Adiacenze = partitaJson.Adiacenze;
-                _partita.Inventari = partitaJson.Inventari;
-                _partita.Combattimenti = partitaJson.Combattimenti;
-                _partita.Missioni = partitaJson.Missioni;
             }
         }
 
@@ -189,6 +188,7 @@ namespace Core.Game_dir
         {
             _log.LogInformation($"Initiating Game Map bootstrapping process");
 
+            //questi devono essere modificati tutti. vanno presi in base all'id della mappa.
             _punti = GetAllPunti().ToArray();
             _tessere = GetAllTessere().ToArray();
             _aree = GetAllAree().ToArray();

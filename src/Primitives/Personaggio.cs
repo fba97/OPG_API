@@ -39,7 +39,11 @@
         public Inventario Inventario { get; set; } = new Inventario();  
         public Stato? Stato { get; set; }
 
-
+        public int SetPosizione(int nuovaPosizione)
+        {
+            Posizione = nuovaPosizione;
+            return Posizione;
+        }
     }
 
 }

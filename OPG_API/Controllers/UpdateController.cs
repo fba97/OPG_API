@@ -22,21 +22,25 @@ namespace OPG_API.Controllers
             _services = services;
 
         }
-        
+
         [HttpGet("GetUpdateTotale")]
-        public async Task<string?> UpdateGameInformations()
+        public IActionResult UpdateGameInformations()
         {
             var game = _services.GetService<Game>();
+            if (game == null)
+                return NotFound();
 
-            return game?.ToString();
+            return Ok(game); 
         }
 
         [HttpGet("GetUpdatePartitaAttuale")]
-        public async Task<ActualPartita?> GetUpdatePartitaAttuale()
+        public IActionResult GetUpdatePartitaAttuale()
         {
             var game = _services.GetService<Game>();
+            if (game?.PartitaAttuale == null)
+                return NotFound();
 
-            return game?.PartitaAttuale;
+            return Ok(game.PartitaAttuale);
         }
 
         [HttpGet("Mappe")]

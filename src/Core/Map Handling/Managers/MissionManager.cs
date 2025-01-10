@@ -44,12 +44,15 @@ namespace Core.Map_Handling.Managers
         }
         private record DirezioneAdiacenza(int IdPuntoUno, int IdPuntoDue);
 
-        public Missione? CreateMission(int idActualPunto, int idDestinationPunto, int idPersonaggio, int numeroPassi)
+
+        public Missione? CreateMission(Personaggio personaggio, int idDestinationePunto, int numeroPassi)
         {
+            var idActualPunto = personaggio.Posizione;
+
             if (NemiciNellaTessera(idActualPunto))
                 return null;
 
-            var shortestPath = GetShortestPath(idActualPunto, idDestinationPunto);
+            var shortestPath = GetShortestPath(idActualPunto, idDestinationePunto);
 
             if (shortestPath == null || !shortestPath.Any())
                 return null;
@@ -62,9 +65,10 @@ namespace Core.Map_Handling.Managers
             var missione = new Missione
             {
                 Id = newMissionId,
+                Personaggio = personaggio,
                 TipoMissione = TipoMissione.Spostamento,
                 Partenza = idActualPunto,
-                Destinazione = idDestinationPunto,
+                Destinazione = idDestinationePunto,
                 Stato = StatoMissione.Nuova,
                 Passi = passi
             };
@@ -126,6 +130,9 @@ namespace Core.Map_Handling.Managers
                     missione.Stato = StatoMissione.Interrotta;
                     break;
                 }
+
+                if (passo.Stato == StatoPasso.Completato)
+                    missione.Personaggio.SetPosizione(passo.Destinazione); 
             }
 
             if(!missione.Passi.Any(p => p.Stato != StatoPasso.Completato))
@@ -139,6 +146,8 @@ namespace Core.Map_Handling.Managers
             if (NemiciNellaTessera(passo.Destinazione))
                 return StatoPasso.Errore;
 
+            passo.SetStato(StatoPasso.Completato);
+       
             return StatoPasso.Completato;
         }
 
