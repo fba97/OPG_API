@@ -25,11 +25,11 @@ namespace OPG_API.Controllers
 
         [HttpPost("StartGame")]
 
-        public async Task<ActionResult> StartGame(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore)
+        public async Task<ActionResult> StartGame(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore, List<int> idPersonaggi)
         {
             var game = _services.GetService<Game>();
 
-            game.NewGame(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore);
+            game.NewGame(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore, idPersonaggi);
 
             return Ok();
         }

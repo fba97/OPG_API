@@ -63,7 +63,7 @@ namespace Core.Game_dir
         }
 
 
-        public bool NewGame(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore)
+        public bool NewGame(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore, IEnumerable<int> idPersonaggi)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Core.Game_dir
                 InitGeneralInfo();
 
                 // in futuro quando avrò piu di una mappa dovrò dare la possibilità di scegliere tramite id_mappa
-                InitNewActualInfo(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore, 1);
+                InitNewActualInfo(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore, 1, idPersonaggi);
 
 
                 _log.LogInformation($"fine Bootstraping NewGame");
@@ -108,30 +108,39 @@ namespace Core.Game_dir
             return true;
         }
 
-        private void InitNewActualInfo(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore, int idMappa)
+        private void InitNewActualInfo(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore, int idMappa, IEnumerable<int> idPersonaggi)
         {
-            if (_partita is null)
-                _partita = new ActualPartita
-                    (0,
-                    nome,
-                    idGiocatore,
-                    idObiettivo,
-                    difficoltà,
-                    1,
-                    DateTime.Now,
-                    null,
-                    null,
-                    string.Empty,
-                    AllMappe, // aggiungi il prendere le informazioni tramite id dal database in base all'id mappa.
-                    AllAree, // sempre da db in base alla mappa
-                    AllTessere, // sempre da db in base alla mappa
-                    AllPunti, // sempre da db in base alla mappa
-                    AllPersonaggi, // prendi i giocatori da una lista di interi messa in input
-                    AllOggetti, //qui li sorteggi a caso. ne prendi 10 e li metti a caso con delle posizioni  
-                    AllAdiacenze, // questo devi pensarci. perchè potrebbe essere che alcune adiacenze siano sbloccate oppure bloccate. ad ogni modo lo toglierei.
-                    new List<Inventario>(), 
-                    new List<Combattimento>(),
-                    new List<Missione>());
+            if (_partita is not null)
+                return;
+
+            var actualAree = AllAree.Where(a => a.Id_Mappa == idMappa);
+            var actualTessere = AllTessere.Where(t => actualAree.Any(a => a.Id == t.Id_Area)).ToList();
+            var actualpunti = AllPunti.Where(p => actualTessere.Any(t => t.Id == p.Id_Tessera)).ToList();
+            var actualPersonaggi = AllPersonaggi.Where(p => idPersonaggi.Any(idp => idp == p.Id));
+
+            _partita = new ActualPartita
+                                (0,
+                                nome,
+                                idGiocatore,
+                                idObiettivo,
+                                difficoltà,
+                                1,
+                                DateTime.Now,
+                                null,
+                                null,
+                                string.Empty,
+                                AllMappe,// da questa lista prendi solo la mappa con id idMappa
+                                AllAree.Where(a => a.Id_Mappa == idMappa),
+                                actualTessere,
+                                actualpunti,
+                                actualPersonaggi, 
+                                AllOggetti, //qui li sorteggi a caso. ne prendi 10 e li metti a caso con delle posizioni  
+                                AllAdiacenze, // questo devi pensarci. perchè potrebbe essere che alcune adiacenze siano sbloccate oppure bloccate. ad ogni modo lo toglierei.
+                                new List<Inventario>(),
+                                new List<Combattimento>(),
+                                new List<Missione>());
+
+
 
         }
         private void InitActualInfo(int idPartita)
@@ -212,7 +221,7 @@ namespace Core.Game_dir
             return $"È stata salvata la partita con id {id_Partita}";
         }
 
-            public List<Personaggio> GetPersonaggiLocatedIn(Tessera tessera)
+        public List<Personaggio> GetPersonaggiLocatedIn(Tessera tessera)
         {
             var puntiDaControllare = tessera.Punti.ToList();
 

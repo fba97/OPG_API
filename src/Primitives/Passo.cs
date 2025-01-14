@@ -25,7 +25,7 @@ namespace Primitives
 
         public StatoPasso SetStato(StatoPasso stato)
         {
-            Stato = Stato;
+            Stato = stato;
             return Stato;
         }
 
