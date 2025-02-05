@@ -14,36 +14,68 @@ using System.Threading.Tasks;
 using Core;
 using Core.Game_dir;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Core.Map_Handling.Managers
 {
-    public class MissionManager
+    public class MissionHandler : IActionHandler
     {
-        private readonly string _connString;
         private Game _game;
-        private readonly List<Missione> _missions = new List<Missione>();
+        private readonly List<Missione> _missions;
         private const int MAX_PATH_LENGTH = 100;
         private const int MAX_PATHS = 1000;
 
-        private readonly ILogger<MissionManager> _log;
-        private readonly IConfiguration _cfg;
-        private readonly IServiceProvider _services;
 
-        public MissionManager
-           (
-                ILogger<MissionManager> logger,
-               IConfiguration configuration,
-               IServiceProvider serviceProvider,
-               Game game
-           )
+        public MissionHandler(Game game)
         {
-            _log = logger;
-            _connString = configuration.GetConnectionString("ConnectionString");
-            _services = serviceProvider;
             _game = game;
+            _missions = new List<Missione>();   
         }
         private record DirezioneAdiacenza(int IdPuntoUno, int IdPuntoDue);
 
+        public ActionResult Execute(Azione azione)
+        {
+            try
+            {
+                var missione = (Missione)azione;
+
+                // Se è una nuova missione, creala
+                if (missione.Stato == StatoMissione.Nuova)
+                {
+                    var createdMission = CreateMission(
+                        missione.Personaggio,
+                        missione.Destinazione,
+                        1  // numeroPassi - parametrizzabile
+                    );
+
+                    if (createdMission == null)
+                    {
+                        return new BadRequestObjectResult(new
+                        {
+                            message = "Impossibile creare la missione. Verifica i parametri inseriti."
+                        });
+                    }
+
+                    missione = createdMission;
+                }
+
+                // Esegui la missione
+                var executedMission = ExecuteMission(missione);
+
+                return new OkObjectResult(executedMission);
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(new
+                {
+                    message = "Si è verificato un errore durante l'esecuzione della missione.",
+                    error = ex.Message
+                })
+                {
+                    StatusCode = 500
+                };
+            }
+        }
 
         public Missione? CreateMission(Personaggio personaggio, int idDestinationePunto, int numeroPassi)
         {
@@ -59,17 +91,11 @@ namespace Core.Map_Handling.Managers
 
             var adiacenzeMissione = shortestPath.Take(numeroPassi);
 
-            int newMissionId = (_missions != null && _missions.Any()) ? _missions.Last().Id + 1 : 1;
+     
             var passi = CreaPassiDaAdiacenze(adiacenzeMissione, idActualPunto);
 
-            var missione = new Missione
+            var missione = new Missione(personaggio, idDestinationePunto)
             {
-                Id = newMissionId,
-                Personaggio = personaggio,
-                TipoMissione = TipoMissione.Spostamento,
-                Partenza = idActualPunto,
-                Destinazione = idDestinationePunto,
-                Stato = StatoMissione.Nuova,
                 Passi = passi
             };
 
@@ -132,10 +158,10 @@ namespace Core.Map_Handling.Managers
                 }
 
                 if (passo.Stato == StatoPasso.Completato)
-                    missione.Personaggio.SetPosizione(passo.Destinazione); 
+                    missione.Personaggio.SetPosizione(passo.Destinazione);
             }
 
-            if(!missione.Passi.Any(p => p.Stato != StatoPasso.Completato))
+            if (!missione.Passi.Any(p => p.Stato != StatoPasso.Completato))
                 missione.Stato = StatoMissione.Completata;
 
             return missione;
@@ -147,7 +173,7 @@ namespace Core.Map_Handling.Managers
                 return StatoPasso.Errore;
 
             passo.SetStato(StatoPasso.Completato);
-       
+
             return StatoPasso.Completato;
         }
 
@@ -194,7 +220,7 @@ namespace Core.Map_Handling.Managers
                     // Check if reached destination
                     if (lastNode.IdPuntoUno == idDestinationPunto || lastNode.IdPuntoDue == idDestinationPunto)
                         return currentPath;
-                    
+
 
                     // Find possible next moves
                     var possibleMoves = adiacenze.Where(a =>

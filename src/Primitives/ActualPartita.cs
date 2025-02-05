@@ -14,7 +14,7 @@ namespace Primitives
 
         public ActualPartita() { }
 
-        public ActualPartita(int id, string nome, int idGiocatore, int idObiettivo, int difficolta, int statoPartita, DateTime? dataInizioPartita,DateTime? dataUltimoSalvataggio, DateTime? dataFinePartita, string json)
+        public ActualPartita(int id, string nome, int idGiocatore, int idObiettivo, int difficolta, int statoPartita,Turno turno, DateTime? dataInizioPartita,DateTime? dataUltimoSalvataggio, DateTime? dataFinePartita, string json)
         {
             Id = id;
             Nome = nome;
@@ -22,13 +22,14 @@ namespace Primitives
             IdObiettivo = idObiettivo;
             Difficolta = difficolta;
             StatoPartita = statoPartita;
+            ActualTurno = turno;
             DataInizioPartita = dataInizioPartita;
             DataUltimoSalvataggio = dataUltimoSalvataggio;
             DataFinePartita = dataFinePartita;
             JSONSalvataggio = json;
         }
 
-        public ActualPartita(int id, string nome, int idGiocatore, int idObiettivo, int difficolta, int statoPartita, DateTime? dataInizioPartita, DateTime? dataUltimoSalvataggio, DateTime? dataFinePartita, string jSONSalvataggio, Mappa? mappa, IEnumerable<Area> aree, IEnumerable<Tessera> tessere, IEnumerable<Punto> punti, IEnumerable<Personaggio> personaggi, IEnumerable<Oggetto> oggetti, IEnumerable<Adiacenza> adiacenze, IEnumerable<Inventario> inventari, IEnumerable<Combattimento> combattimenti, IEnumerable<Missione> missioni) : this(id, nome, idGiocatore, idObiettivo, difficolta, statoPartita, dataInizioPartita, dataUltimoSalvataggio, dataFinePartita, jSONSalvataggio)
+        public ActualPartita(int id, string nome, int idGiocatore, int idObiettivo, int difficolta, int statoPartita, Turno turno,DateTime? dataInizioPartita, DateTime? dataUltimoSalvataggio, DateTime? dataFinePartita, string jSONSalvataggio, Mappa? mappa, IEnumerable<Area> aree, IEnumerable<Tessera> tessere, IEnumerable<Punto> punti, IEnumerable<Personaggio> personaggi, IEnumerable<Oggetto> oggetti, IEnumerable<Adiacenza> adiacenze, IEnumerable<Inventario> inventari, IEnumerable<Combattimento> combattimenti, IEnumerable<Missione> missioni) : this(id, nome, idGiocatore, idObiettivo, difficolta, statoPartita, turno, dataInizioPartita, dataUltimoSalvataggio, dataFinePartita, jSONSalvataggio)
         {
             Mappa = mappa;
             Aree = aree;
@@ -58,6 +59,7 @@ namespace Primitives
         public int IdObiettivo { get; set; } = 0; //per il momento rimane a 0 
         public int Difficolta { get; set; } = 0; //per il momento rimane a 0 
         public int StatoPartita { get; set; } = 0; // 1 nuova, 2 esecuzione, 3 terminata
+        public Turno ActualTurno { get; set; } = new Turno();
         public DateTime? DataInizioPartita { get; set; }
         public DateTime? DataUltimoSalvataggio { get; set; }        
         public DateTime? DataFinePartita { get; set; }

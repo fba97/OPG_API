@@ -18,6 +18,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowOrigin",
         builder => builder.WithOrigins("https://localhost:7087"));
+    options.AddPolicy("AllowAngularDevServer",
+       builder =>
+       {
+           builder
+               .WithOrigins("http://localhost:4200") // URL del tuo frontend Angular
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+       });
 });
 
 var app = builder.Build();
@@ -30,6 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 //Use CORS middleware
 app.UseCors("AllowOrigin");
+app.UseCors("AllowAngularDevServer");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

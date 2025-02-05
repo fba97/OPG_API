@@ -33,27 +33,47 @@ namespace OPG_API.Controllers
             return Ok(game); 
         }
 
-        [HttpGet("GetUpdatePartitaAttuale")]
+        [HttpGet("GetUpdatePartitaSoft")]
         public IActionResult GetUpdatePartitaAttuale()
         {
             var game = _services.GetService<Game>();
             if (game?.PartitaAttuale == null)
                 return NotFound();
 
-            return Ok(game.PartitaAttuale);
+            var result = new ActualPartita()
+            { 
+                Id = game.PartitaAttuale.Id,
+                Difficolta = game.PartitaAttuale.Difficolta,
+                DataInizioPartita = game.PartitaAttuale.DataInizioPartita,
+                DataFinePartita = game.PartitaAttuale.DataFinePartita,
+                DataUltimoSalvataggio = game.PartitaAttuale.DataUltimoSalvataggio,
+                IdObiettivo = game.PartitaAttuale.IdObiettivo,
+                Inventari = game.PartitaAttuale.Inventari,
+                IdGiocatore = game.PartitaAttuale.IdGiocatore,
+                Nome = game.PartitaAttuale.Nome,
+                Oggetti = game.PartitaAttuale.Oggetti,
+                Personaggi = game.PartitaAttuale.Personaggi,
+                StatoPartita= game.PartitaAttuale.StatoPartita,
+                Combattimenti = game.PartitaAttuale.Combattimenti,
+                Missioni = game.PartitaAttuale.Missioni,
+                Punti = game.AllPunti,
+                ActualTurno = game.PartitaAttuale.ActualTurno
+            };
+
+            return Ok(result);
         }
 
-        [HttpGet("Mappe")]
-        // quando tiro su la mappa è sempre solo 1. fa niente per il momento.
-        public IEnumerable<Mappa> Mappe()
+        [HttpGet("GetMappa")]
+        public IActionResult GetMappa()
         {
             var game = _services.GetService<Game>();
 
-            if (game?.AllMappe is null)
-                return new List<Mappa>();
+            if (game is null || game.PartitaAttuale is null)
+                return NotFound();
 
-            var ListaMappe = new List<Mappa> { game.AllMappe };
-            return ListaMappe;
+            var result = game.PartitaAttuale.Mappa;
+
+            return Ok(result);
         }
 
         [HttpGet("Aree")]

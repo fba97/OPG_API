@@ -118,6 +118,9 @@ namespace Core.Game_dir
             var actualpunti = AllPunti.Where(p => actualTessere.Any(t => t.Id == p.Id_Tessera)).ToList();
             var actualPersonaggi = AllPersonaggi.Where(p => idPersonaggi.Any(idp => idp == p.Id));
 
+            var PersonaggiIds = actualPersonaggi.Select(p => p.Id).ToList();
+            var turnoActual = Turno.StartGame(PersonaggiIds);
+
             _partita = new ActualPartita
                                 (0,
                                 nome,
@@ -125,6 +128,7 @@ namespace Core.Game_dir
                                 idObiettivo,
                                 difficoltà,
                                 1,
+                                turnoActual,
                                 DateTime.Now,
                                 null,
                                 null,
@@ -136,13 +140,17 @@ namespace Core.Game_dir
                                 actualPersonaggi, 
                                 AllOggetti, //qui li sorteggi a caso. ne prendi 10 e li metti a caso con delle posizioni  
                                 AllAdiacenze, // questo devi pensarci. perchè potrebbe essere che alcune adiacenze siano sbloccate oppure bloccate. ad ogni modo lo toglierei.
-                                new List<Inventario>(),
+                                InitInventari(PersonaggiIds),
                                 new List<Combattimento>(),
                                 new List<Missione>());
 
 
 
         }
+
+        private IEnumerable<Inventario> InitInventari(List<int> personaggiIds) =>
+         personaggiIds.Select((id, index) => new Inventario(index, id)).ToList();
+
         private void InitActualInfo(int idPartita)
         {
             _partita = GetActualPartita(idPartita);
@@ -156,6 +164,7 @@ namespace Core.Game_dir
                 _partita.IdObiettivo = partitaJson.IdObiettivo;
                 _partita.Difficolta = partitaJson.Difficolta;
                 _partita.StatoPartita = partitaJson.StatoPartita;
+                _partita.ActualTurno = partitaJson.ActualTurno;
                 _partita.DataInizioPartita = partitaJson.DataInizioPartita;
                 _partita.DataUltimoSalvataggio = partitaJson.DataUltimoSalvataggio;
                 _partita.DataFinePartita = partitaJson.DataFinePartita;
@@ -214,6 +223,7 @@ namespace Core.Game_dir
                 return "Nessuna partita da salvare";
 
             _partita.JSONSalvataggio = _partita.Serialize();
+            
             var id_Partita = SalvaPartitaToDB(_partita);
             _partita.Id = id_Partita;
             _partita.JSONSalvataggio = _partita.Serialize();

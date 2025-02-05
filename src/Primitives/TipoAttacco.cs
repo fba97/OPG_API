@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Primitives
 {
-    public enum TipoMissione : int
+    public enum TipoAttacco : int
     {
-        Spostamento = 1
+        AttaccoSingolo = 1,
+        AttaccoAGruppi = 2
     }
 }

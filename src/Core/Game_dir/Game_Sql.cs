@@ -153,7 +153,7 @@ namespace Core.Game_dir
                 int difesa = r.GetInt32("difesa");
                 string descrizione = r.IsDBNull("Descrizione") ? string.Empty : r.GetString("Descrizione");
                 int tipo_personaggio = r.GetInt32("Tipo_Personaggio");
-                int id_posizione = r.IsDBNull("Descrizione") ? 0 : r.GetInt32("Id_Posizione");
+                int id_posizione = r.IsDBNull("Id_Posizione") ? 0 : r.GetInt32("Id_Posizione");
 
 
                 yield return new Personaggio(id,nome,punti_vita,attacco,difesa,descrizione,tipo_personaggio,id_posizione, taglia:0, livello:0);
@@ -167,6 +167,7 @@ namespace Core.Game_dir
                                                  ,[nome]
                                                  ,[descrizione]
                                                  ,[tipo]
+                                                 ,[Stato]
                                                  ,[bonus_attacco]
                                                  ,[bonus_difesa]
                                                  ,[Id_Posizione]
@@ -181,13 +182,14 @@ namespace Core.Game_dir
                 string nome = r.GetString("nome");
                 string descrizione = r.IsDBNull("descrizione") ? string.Empty : r.GetString("Descrizione");
                 int tipo_oggetto = r.GetInt32("tipo");
+                int stato = r.GetInt32("Stato");
                 int id_posizione = r.GetInt32("Id_Posizione");
                 int bonus_attacco = r.GetInt32("bonus_attacco");
                 int bonus_difesa = r.GetInt32("bonus_difesa");
                 int id_inventario = r.GetInt32("id_inventario");
 
 
-                yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, bonus_attacco, bonus_difesa, id_posizione, id_inventario);
+                yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, stato, bonus_attacco, bonus_difesa, id_posizione, id_inventario);
             }
         }
         private ActualPartita? GetActualPartita(int id)
@@ -229,7 +231,7 @@ namespace Core.Game_dir
                 var json = r.IsDBNull("SalvataggioJSON") ? string.Empty : (string)r.GetString("SalvataggioJSON");
 
 
-                return new ActualPartita(id_partita, nome, IdGiocatore, idObiettivo, difficolta, statoPartita, dataInizioPartita, data_ultimo_Salvataggio, dataFinePartita, json);
+                return new ActualPartita(id_partita, nome, IdGiocatore, idObiettivo, difficolta, statoPartita,new Turno(), dataInizioPartita, data_ultimo_Salvataggio, dataFinePartita, json);
             }
             return null;
         }
