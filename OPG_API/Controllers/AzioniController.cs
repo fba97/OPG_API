@@ -40,25 +40,45 @@ namespace OPG_API.Controllers
 
         [HttpPost("Raccogli")]
         // tipologia in base alla tipologia di oggetto? sviluppi possibili
-        public ActionResult Raccogli(int idPersonaggio, int idRaccolto, int tipologia) 
+        public ActionResult Raccogli() 
         {
-            return Ok();
+            var game = _services.GetService<Game>();
+            if (game?.PartitaAttuale == null)
+                return BadRequest("Caricare una partita prima di eseguire missioni");
+
+            var idPersonaggio = game.PartitaAttuale.ActualTurno.IdDelPersonaggioInTurno;
+
+            var personaggio = game.PartitaAttuale.Personaggi.FirstOrDefault(p => p.Id == idPersonaggio);
+            if (personaggio is null)
+                return BadRequest("Personaggio non trovato nella partita");
+
+            var oggetto = game.PartitaAttuale.Inventari.Where(i => i.Tipo == TipoInventario.Mappa)
+                                                       .SelectMany(i => i.Oggetti)
+                                                       .FirstOrDefault(o => o.Oggetto.Id_Posizione == personaggio.Posizione);
+            if (oggetto is null)
+                return BadRequest("Oggetto da raccogliere non trovato nella partita");
+
+            var spostaOggetto = new SpostaOggetto(personaggio, oggetto.Oggetto, TipoAzione.Raccogli);
+
+            var result = _actionManager.ExecuteAction(spostaOggetto);
+
+            return result;
         }
 
         [HttpPost("Probabilità")]
-        public ActionResult Probabilità(int idpersonaggio, int posizionePunto)
+        public ActionResult Probabilità()
         {
             return Ok();
         }
 
         [HttpPost("Imprevisto")]
-        public ActionResult Imprevisto(int idpersonaggio, int posizionePunto)
+        public ActionResult Imprevisto()
         {
             return Ok();
         }
 
         [HttpPost("ConcludiTurno")]
-        public ActionResult ConcludiTurno(int idGiocatore)
+        public ActionResult ConcludiTurno()
         {
             var game = _services.GetService<Game>();
             var actionManager = _services.GetService<ActionManager>();
@@ -100,11 +120,13 @@ namespace OPG_API.Controllers
         }
 
         [HttpPost("CreaEseguiMissione")]
-        public async Task<ActionResult> CreaEseguiMissione(int idPersonaggio, int destinazione, int numeroPassi)
+        public async Task<ActionResult> CreaEseguiMissione(int destinazione)
         {
             var game = _services.GetService<Game>();
             if (game?.PartitaAttuale == null)
                 return BadRequest("Caricare una partita prima di eseguire missioni");
+
+            var idPersonaggio = game.PartitaAttuale.ActualTurno.IdDelPersonaggioInTurno;
 
             var personaggio = game.PartitaAttuale.Personaggi.FirstOrDefault(p => p.Id == idPersonaggio);
             if (personaggio == null)

@@ -170,7 +170,6 @@ namespace Core.Game_dir
                                                  ,[Stato]
                                                  ,[bonus_attacco]
                                                  ,[bonus_difesa]
-                                                 ,[Id_Posizione]
                                              FROM [dbo].[Oggetti]", conn);
             conn.Open();
 
@@ -183,13 +182,11 @@ namespace Core.Game_dir
                 string descrizione = r.IsDBNull("descrizione") ? string.Empty : r.GetString("Descrizione");
                 int tipo_oggetto = r.GetInt32("tipo");
                 int stato = r.GetInt32("Stato");
-                int id_posizione = r.GetInt32("Id_Posizione");
                 int bonus_attacco = r.GetInt32("bonus_attacco");
                 int bonus_difesa = r.GetInt32("bonus_difesa");
-                int id_inventario = r.GetInt32("id_inventario");
 
 
-                yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, stato, bonus_attacco, bonus_difesa, id_posizione, id_inventario);
+                yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, stato, bonus_attacco, bonus_difesa, null, null);
             }
         }
         private ActualPartita? GetActualPartita(int id)

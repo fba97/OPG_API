@@ -9,22 +9,31 @@ namespace Primitives
     public class Inventario
     {
         public Inventario() { }
-        public Inventario(int id, int idPersonaggio) 
+        public Inventario(int id, int? idPersonaggio) 
         {
             Id = id;
-            IdPersonaggio = idPersonaggio;
+            PersonaggioId = idPersonaggio;
         }
-        public Inventario(int id, int idPersonaggio, IEnumerable<Oggetto> listaIdOggetti) 
+        public Inventario(int id, int? idPersonaggio, List<OggettoInventario> listaIdOggetti) 
         {
             Id = id;
-            IdPersonaggio = idPersonaggio;
-            ListaIdOggetti = listaIdOggetti;
+            PersonaggioId = idPersonaggio;
+            Oggetti = listaIdOggetti;
         }
+            public int Id { get; set; }
+            public int? PersonaggioId { get; set; }  // Null per inventari non legati a personaggi (es. casse)
+            public int CapacitaMassima { get; set; } = 10;
+            public TipoInventario Tipo { get; set; } = TipoInventario.Personaggio;
+            public List<OggettoInventario> Oggetti { get; set; } = new List<OggettoInventario>();
 
-
-        public int Id { get; set; } = 0;
-        public int IdPersonaggio { get; set; }
-        public IEnumerable<Oggetto> ListaIdOggetti { get; set; } = new List<Oggetto>();
+         
+        }
+    public class OggettoInventario
+    {
+        public Oggetto Oggetto { get; set; }
+        public int Quantita { get; set; }
+        public bool IsEquipaggiato { get; set; }
 
     }
+
 }

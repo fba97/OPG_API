@@ -120,6 +120,7 @@ namespace Core.Game_dir
 
             var PersonaggiIds = actualPersonaggi.Select(p => p.Id).ToList();
             var turnoActual = Turno.StartGame(PersonaggiIds);
+          
 
             _partita = new ActualPartita
                                 (0,
@@ -140,16 +141,13 @@ namespace Core.Game_dir
                                 actualPersonaggi, 
                                 AllOggetti, //qui li sorteggi a caso. ne prendi 10 e li metti a caso con delle posizioni  
                                 AllAdiacenze, // questo devi pensarci. perchè potrebbe essere che alcune adiacenze siano sbloccate oppure bloccate. ad ogni modo lo toglierei.
-                                InitInventari(PersonaggiIds),
+                                new List<Inventario>(),
                                 new List<Combattimento>(),
                                 new List<Missione>());
 
-
-
+            InitOggettiTemplate();
+            _partita.Inventari = InitInventari(PersonaggiIds).ToList();
         }
-
-        private IEnumerable<Inventario> InitInventari(List<int> personaggiIds) =>
-         personaggiIds.Select((id, index) => new Inventario(index, id)).ToList();
 
         private void InitActualInfo(int idPartita)
         {
@@ -176,6 +174,9 @@ namespace Core.Game_dir
                 _partita.Personaggi = partitaJson.Personaggi;
                 _partita.Oggetti = partitaJson.Oggetti;
                 _partita.Adiacenze = partitaJson.Adiacenze;
+                _partita.Combattimenti = partitaJson.Combattimenti;
+                _partita.ActualTurno = partitaJson.ActualTurno;
+                _partita.Inventari = partitaJson.Inventari;
             }
         }
 

@@ -17,7 +17,10 @@ namespace OPG_API
         {
             services.AddSingleton<Game>();
             services.AddSingleton<ActionManager>();
-           
+            services.AddSingleton<OggettoManager>();
+            services.AddSingleton<InventarioManager>();
+
+
             services.AddUnitOfWork();
 
             return services;

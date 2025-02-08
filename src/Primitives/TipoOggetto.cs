@@ -9,7 +9,6 @@ namespace Primitives
     public enum TipoOggetto : int
     {
         Generico = 1,
-        Probabilita = 2,
-        Imprevisto = 3
+        Moltiplicatore = 2
     }
 }

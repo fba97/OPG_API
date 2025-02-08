@@ -127,8 +127,6 @@ namespace Core.Map_Handling.Managers
         }
 
         private int GetCorrectId()
-        {
-            throw new NotImplementedException();
-        }
+        => (_game.PartitaAttuale?.Combattimenti != null && _game.PartitaAttuale.Combattimenti.Any()) ? _game.PartitaAttuale.Combattimenti.Last().Id + 1 : 1;
     }
 }

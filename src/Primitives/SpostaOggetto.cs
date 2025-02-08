@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Primitives
 {
-    public class UsaOggetto : Azione
+    public class SpostaOggetto : Azione
     {
-        public UsaOggetto(Personaggio chiUsa, Oggetto oggetto)
+        public SpostaOggetto(Personaggio soggetto, Oggetto oggetto, TipoAzione tipoSpostamento)
         {
-            Personaggio = chiUsa;
-            TipoAzione = TipoAzione.Usa;
+            Personaggio = soggetto;
+            TipoAzione = tipoSpostamento;
             Oggetto = oggetto;
         }
 

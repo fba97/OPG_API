@@ -19,12 +19,16 @@ namespace Core.Map_Handling.Managers
     {
         private readonly Dictionary<TipoAzione, IActionHandler> _handlers;
         private Game _game;
-        public ActionManager(Game game)
+        public ActionManager(Game game, IServiceProvider services)
         {
             _game = game;
             _handlers = new Dictionary<TipoAzione, IActionHandler> 
         {
-            { TipoAzione.Spostamento, new MissionHandler(game) }
+            { TipoAzione.Spostamento, new MissionHandler(game) },
+            { TipoAzione.Attacco, new AttaccoHandler(game) },
+            { TipoAzione.Raccogli, new SpostaOggettoHandler(game,services) },
+            { TipoAzione.Usa, new UsaOggettoHandler(game,services) }
+
             // Altri handler...
         };
         }
@@ -74,6 +78,8 @@ namespace Core.Map_Handling.Managers
             );
 
             actTurn.AzioniRimanenti = actTurn.AzioniMassimePerTurno;
+
+            _game.PartitaAttuale.ActualTurno = actTurn;
         }
 
         public Turno Reset(Turno actTurn)

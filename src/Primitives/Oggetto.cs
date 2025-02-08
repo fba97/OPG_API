@@ -20,7 +20,7 @@ namespace Primitives
             Id_Posizione = id_Posizione;
             Id_Inventario = id_inventario;
         }
-
+        public Oggetto() { }
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string Descrizione { get; set; } = string.Empty;
