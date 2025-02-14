@@ -7,9 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OPG_API", "OPG_API\OPG_API.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Primitives", "src\Primitives\Primitives.csproj", "{F57EBF5A-E9EC-441A-9EB2-1B32125D955D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "src\Test\Test.csproj", "{7E24D1AC-1576-481E-B28C-579CC33B1143}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{87D9C4AA-D26C-45DC-9CE1-04DC80D3A81E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.csproj", "{87D9C4AA-D26C-45DC-9CE1-04DC80D3A81E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{F57EBF5A-E9EC-441A-9EB2-1B32125D955D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F57EBF5A-E9EC-441A-9EB2-1B32125D955D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F57EBF5A-E9EC-441A-9EB2-1B32125D955D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7E24D1AC-1576-481E-B28C-579CC33B1143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7E24D1AC-1576-481E-B28C-579CC33B1143}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7E24D1AC-1576-481E-B28C-579CC33B1143}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7E24D1AC-1576-481E-B28C-579CC33B1143}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87D9C4AA-D26C-45DC-9CE1-04DC80D3A81E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87D9C4AA-D26C-45DC-9CE1-04DC80D3A81E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87D9C4AA-D26C-45DC-9CE1-04DC80D3A81E}.Release|Any CPU.ActiveCfg = Release|Any CPU
