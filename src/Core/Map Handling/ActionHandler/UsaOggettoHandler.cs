@@ -34,10 +34,36 @@ namespace Core.Map_Handling.Managers
         {
             // per utilizzare un oggetto supponiamo inizialmente che ce ne siano di un solo tipo.
             // come ad esempio potenziamenti poi aggiungerò gli altri in un futuro
-            return new ObjectResult(new{message = "HANDLER DI UTILIZZO OGGETTO NON ANCORA IMPLEMENTATO"})
+
+            var usaOggetto = (UsaOggetto)azione;
+            Result<bool> res = Result<bool>.Failure("HANDLER DI UTILIZZO OGGETTO TERMINATO IN FAILURE.");
+
+            try
             {
-                StatusCode = 500
-            };
+                switch (usaOggetto.TipoAzione)
+                {
+                    case TipoAzione.Usa:
+                        res = _oggettoManager.UsaOggetto(usaOggetto);
+                        break;
+                    default:
+                        break;
+
+                }
+
+                return new OkObjectResult(res);
+            }
+
+            catch (Exception ex)
+            {
+                return new ObjectResult(new
+                {
+                    message = "Si è verificato un errore durante l'esecuzione della missione.",
+                    error = ex.Message
+                })
+                {
+                    StatusCode = 500
+                };
+            }
         }
     }
 }

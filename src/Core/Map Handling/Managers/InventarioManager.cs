@@ -63,22 +63,6 @@ namespace Core.Map_Handling.Managers
             return Result.Success(true);
         }
 
-        public Result<bool> UsaOggetto(int oggettoId, int inventarioId, int personaggioId)
-        {
-            var inventarioResult = GetInventario(inventarioId);
-            if (!inventarioResult.IsSuccess)
-                return Result.Failure<bool>("Inventario non trovato");
 
-            var inventario = inventarioResult.Value;
-
-            // Verifica che l'oggetto appartenga al personaggio giusto
-            if (inventario.PersonaggioId != personaggioId)
-                return Result.Failure<bool>("L'oggetto non appartiene a questo personaggio");
-
-            // Logica di utilizzo
-            // ...
-
-            return Result.Success(true);
-        }
     }
 }

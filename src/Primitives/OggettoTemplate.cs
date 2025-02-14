@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Primitives.Oggetti.Effetti;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace Primitives
         public StatoOggetto Stato { get; set; }
         public int BonusAttacco { get; set; }
         public int BonusDifesa { get; set; }
+        public EffettoOggetto Effetto { get; set; } = new NessunEffettoOggetto(); 
     }
 }

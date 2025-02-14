@@ -59,7 +59,8 @@ namespace Core.Game_dir
                 stato: (int)template.Stato,
                 bonusAttacco: template.BonusAttacco,
                 bonusDifesa: template.BonusDifesa,
-                id_Posizione: posizione
+                id_Posizione: posizione,
+                effettoOggetto: template.Effetto
             );
         }
 

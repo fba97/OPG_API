@@ -28,5 +28,6 @@ namespace Primitives
     {
         public static Result<T> Success<T>(T value) => Result<T>.Success(value);
         public static Result<T> Failure<T>(string error) => Result<T>.Failure(error);
+
     }
 }

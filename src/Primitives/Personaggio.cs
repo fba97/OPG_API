@@ -6,7 +6,7 @@
 
         public Personaggio() { }
 
-        public Personaggio(int id, string nome, int punti_Vita, int attacco, int difesa, string descrizione, int tipoPersonaggio, int posizione, int taglia, int livello, Stato? stato = null)
+        public Personaggio(int id, string nome, int punti_Vita, int attacco, int difesa, string descrizione, int tipoPersonaggio, int posizione, int taglia, int livello,int gittataAttacco, int gittataOggetti, Stato? stato = null)
         {
             Id = id;
             Nome = nome;
@@ -24,6 +24,8 @@
             Stato = stato;
             Taglia = taglia;
             Livello = livello;
+            GittataAttacco = gittataAttacco;
+            GittataOggetti = gittataOggetti;
         }
 
         public int Id { get; set; }
@@ -36,6 +38,8 @@
         public int Posizione { get; set; }
         public int Taglia { get; set; }
         public int Livello { get; set; }
+        public int GittataAttacco { get; set; }
+        public int GittataOggetti { get; set; } = 1;
         public Inventario Inventario { get; set; } = new Inventario();  
         public Stato? Stato { get; set; }
 

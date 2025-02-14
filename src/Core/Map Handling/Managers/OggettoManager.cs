@@ -68,9 +68,26 @@ namespace Core.Map_Handling.Managers
         }
 
 
-        public void UsaOggetto(UsaOggetto oggetto)
+        public Result<bool> UsaOggetto(UsaOggetto usaOggetto)
         {
-            // Logica per usare un oggetto
+            if(usaOggetto is null)
+                return Result.Failure<bool>("azione nulla");
+
+            var oggetto = usaOggetto.Oggetto;
+            if(oggetto is null)
+                return Result.Failure<bool>("oggetto nullo");
+
+            var personaggio = _game.PartitaAttuale?.Personaggi.FirstOrDefault(p => p.Id == usaOggetto.Personaggio.Id);
+            if(personaggio == null)
+                return Result.Failure<bool>("Personaggio non trovato");
+
+            var condizioniResult = oggetto.Effetto.CondizioniPerUso(usaOggetto);
+            if(!condizioniResult.IsSuccess)
+                return condizioniResult;
+
+            oggetto.Effetto.Usa(usaOggetto);
+
+            return Result.Success(true);
         }
 
         public void EquipaggiaOggetto(int itemId)

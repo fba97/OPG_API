@@ -132,13 +132,15 @@ namespace Core.Game_dir
         {
             using var conn = new SqlConnection(_connString);
             using var cmd = new SqlCommand(@"SELECT [id_personaggio]
-                                                 ,[nome]
-                                                 ,[punti_vita]
-                                                 ,[attacco]
-                                                 ,[difesa]
-                                                 ,[Descrizione]
-                                                 ,[Tipo_Personaggio]
-                                                 ,[Id_Posizione]
+                                                    ,[nome]
+                                                    ,[punti_vita]
+                                                    ,[attacco]
+                                                    ,[difesa]
+                                                    ,[Descrizione]
+                                                    ,[Tipo_Personaggio]
+                                                    ,[Id_Posizione]
+                                                    ,[Gittata_Attacco]
+                                                    ,[Gittata_Oggetti]
                                              FROM [dbo].[Personaggi]", conn);
             conn.Open();
 
@@ -154,9 +156,12 @@ namespace Core.Game_dir
                 string descrizione = r.IsDBNull("Descrizione") ? string.Empty : r.GetString("Descrizione");
                 int tipo_personaggio = r.GetInt32("Tipo_Personaggio");
                 int id_posizione = r.IsDBNull("Id_Posizione") ? 0 : r.GetInt32("Id_Posizione");
+                int gittataAttacco = r.IsDBNull("Gittata_Attacco") ? 1 : r.GetInt32("Gittata_Attacco");
+                int gittataOggetti = r.IsDBNull("Gittata_Oggetti") ? 0 : r.GetInt32("Gittata_Oggetti");
 
 
-                yield return new Personaggio(id,nome,punti_vita,attacco,difesa,descrizione,tipo_personaggio,id_posizione, taglia:0, livello:0);
+
+                yield return new Personaggio(id,nome,punti_vita,attacco,difesa,descrizione,tipo_personaggio,id_posizione, taglia:0, livello:0, gittataAttacco, gittataOggetti);
             }
         }
 
@@ -164,12 +169,14 @@ namespace Core.Game_dir
         {
             using var conn = new SqlConnection(_connString);
             using var cmd = new SqlCommand(@"SELECT [id_oggetto]
-                                                 ,[nome]
-                                                 ,[descrizione]
-                                                 ,[tipo]
-                                                 ,[Stato]
-                                                 ,[bonus_attacco]
-                                                 ,[bonus_difesa]
+                                                    ,[nome]
+                                                    ,[descrizione]
+                                                    ,[tipo]
+                                                    ,[Stato]
+                                                    ,[bonus_attacco]
+                                                    ,[bonus_difesa]
+                                                    ,[tipo_effetto]
+                                                    ,[configurazione]
                                              FROM [dbo].[Oggetti]", conn);
             conn.Open();
 
@@ -184,9 +191,12 @@ namespace Core.Game_dir
                 int stato = r.GetInt32("Stato");
                 int bonus_attacco = r.GetInt32("bonus_attacco");
                 int bonus_difesa = r.GetInt32("bonus_difesa");
+                string tipo_effetto = r.IsDBNull("tipo_effetto") ? string.Empty : r.GetString("tipo_effetto"); 
+                string configurazione = r.IsDBNull("configurazione") ? string.Empty : r.GetString("configurazione");
 
 
-                yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, stato, bonus_attacco, bonus_difesa, null, null);
+
+                yield return new Oggetto(id_oggetto, nome, descrizione, tipo_oggetto, stato, bonus_attacco, bonus_difesa, tipo_effetto, configurazione, null, null);
             }
         }
         private ActualPartita? GetActualPartita(int id)
