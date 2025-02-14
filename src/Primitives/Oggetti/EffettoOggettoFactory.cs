@@ -20,9 +20,10 @@ public class EffettoOggettoFactory
         {
             "moltiplicatoreattacco" => CreaMoltiplicatoreAttacco(configurazione),
             "nessuneffetto" => new NessunEffettoOggetto(),
-            // Aggiungine altri
+            // Aggiungine gli altri. li trovi nella tabella oggetti del db.
+            
 
-            _ => throw new ArgumentException($"Tipo effetto non riconosciuto: {tipoEffetto}")
+            _ => new NessunEffettoOggetto()
         };
     }
 

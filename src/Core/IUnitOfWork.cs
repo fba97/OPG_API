@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Threading;
 using Microsoft.Data.SqlClient;
-using Core.Repository;
 
 namespace Core.Base
 {

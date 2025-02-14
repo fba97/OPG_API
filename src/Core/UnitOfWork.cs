@@ -5,12 +5,9 @@ using System.Reflection.Metadata;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
-using Core.Repository;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.Base
 {

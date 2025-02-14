@@ -2,7 +2,6 @@ using Core;
 using Core.Base;
 using Microsoft.AspNetCore.Mvc;
 using Primitives;
-using Core.Repository;
 using Core.Game_dir;
 
 namespace OPG_API.Controllers
