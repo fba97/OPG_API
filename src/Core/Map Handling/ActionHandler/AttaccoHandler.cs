@@ -75,6 +75,13 @@ namespace Core.Map_Handling.Managers
                             ListaEroi = new List<int>() { eroe.Id },
                             ListaNPCs = new List<int>() { nemico.Id }
                         };
+
+                        var allCombattimenti = _game.PartitaAttuale?.Combattimenti.ToList();
+                        allCombattimenti.Add(combattimento);
+                        _game.PartitaAttuale.Combattimenti = allCombattimenti;
+
+
+
                     }
                     else
                     {

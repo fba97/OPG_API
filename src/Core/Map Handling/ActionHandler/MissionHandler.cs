@@ -169,7 +169,7 @@ namespace Core.Map_Handling.Managers
 
         public StatoPasso ExecuteStep(Passo passo)
         {
-            if (NemiciNellaTessera(passo.Destinazione))
+            if (NemiciNellaTessera(passo.Sorgente))
                 return StatoPasso.Errore;
 
             passo.SetStato(StatoPasso.Completato);

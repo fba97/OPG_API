@@ -63,7 +63,7 @@ namespace Core.Game_dir
         }
 
 
-        public bool NewGame(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore, IEnumerable<int> idPersonaggi)
+        public bool NewGame(string nome, int difficoltà, IEnumerable<int> idPersonaggi)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Core.Game_dir
                 InitGeneralInfo();
 
                 // in futuro quando avrò piu di una mappa dovrò dare la possibilità di scegliere tramite id_mappa
-                InitNewActualInfo(nome, difficoltà, numeroGiocatori, idObiettivo, idGiocatore, 1, idPersonaggi);
+                InitNewActualInfo(nome, difficoltà, 1, idPersonaggi, idObiettivo: 1, idGiocatore:1);
 
 
                 _log.LogInformation($"fine Bootstraping NewGame");
@@ -108,7 +108,7 @@ namespace Core.Game_dir
             return true;
         }
 
-        private void InitNewActualInfo(string nome, int difficoltà, int numeroGiocatori, int idObiettivo, int idGiocatore, int idMappa, IEnumerable<int> idPersonaggi)
+        private void InitNewActualInfo(string nome, int difficoltà, int idMappa, IEnumerable<int> idPersonaggi, int idObiettivo = 1, int idGiocatore = 1)
         {
             if (_partita is not null)
                 return;
@@ -116,7 +116,8 @@ namespace Core.Game_dir
             var actualAree = AllAree.Where(a => a.Id_Mappa == idMappa);
             var actualTessere = AllTessere.Where(t => actualAree.Any(a => a.Id == t.Id_Area)).ToList();
             var actualpunti = AllPunti.Where(p => actualTessere.Any(t => t.Id == p.Id_Tessera)).ToList();
-            var actualPersonaggi = AllPersonaggi.Where(p => idPersonaggi.Any(idp => idp == p.Id));
+            var actualPersonaggi = InitializePersonaggi(idPersonaggi);
+            
 
             var PersonaggiIds = actualPersonaggi.Select(p => p.Id).ToList();
             var turnoActual = Turno.StartGame(PersonaggiIds);
@@ -147,6 +148,15 @@ namespace Core.Game_dir
 
             InitOggettiTemplate();
             _partita.Inventari = InitInventari(PersonaggiIds).ToList();
+        }
+
+        private IEnumerable<Personaggio> InitializePersonaggi(IEnumerable<int> idPersonaggi)
+        {
+            var personaggiGiocabili = AllPersonaggi.Where(p => idPersonaggi.Any(idp => idp == p.Id));
+
+            var personaggiNpcNemici = AllPersonaggi.Where(p => p.TipoPersonaggio == TipoPersonaggio.NemicoNPC);
+            
+            return personaggiGiocabili.Concat(personaggiNpcNemici);
         }
 
         private void InitActualInfo(int idPartita)
